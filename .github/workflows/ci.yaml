@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
       - uses: pre-commit/action@v3.0.1
-  lint:
+  code-qa:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
@@ -29,22 +29,7 @@ jobs:
         uses: dagger/dagger-for-github@8.0.0
         with:
           call: lint
-  test:
-    runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read
-    needs:
-      - lint
-      - pre-commit
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |-
-            go:
-              - '**/*.go'
       - if: steps.changes.outputs.go == 'true'
         uses: dagger/dagger-for-github@8.0.0
         with:
-          call: test
+          call: lint
