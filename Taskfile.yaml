@@ -1,0 +1,25 @@
+# https://taskfile.dev
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+
+version: 3
+
+tasks:
+  default:
+    cmds:
+      - task -l
+      - dagger functions
+  test:
+    desc: run all tests
+    cmd: dagger call test --source=.
+  server:dev:
+    desc: run the server directly
+    dir: "cmd/server"
+    cmd: go run .
+    dotenv:
+      - .env
+  server:build:
+    desc: build the server
+    cmd: "dagger call build-server-container --source=."
+  server:run:
+    desc: run the server container
+    cmd: "dagger call build-server-container --source=. as-service up --ports=8080:8080"
