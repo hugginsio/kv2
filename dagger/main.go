@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"dagger/kv-2/internal/dagger"
-	"fmt"
 	"time"
 )
 
@@ -31,15 +30,6 @@ func (m *Kv2) svu(ctx context.Context, source *dagger.Directory) *dagger.Contain
 		From("ghcr.io/caarlos0/svu:v3.2.2").
 		WithDirectory("/tmp/.git", source.Directory(".git")).
 		WithWorkdir("/tmp")
-}
-
-// Get the next release version.
-func (m *Kv2) ReleaseVersion(
-	ctx context.Context,
-	// +defaultPath="/"
-	source *dagger.Directory,
-) (string, error) {
-	return m.svu(ctx, source).WithExec([]string{"svu", "next"}).Stdout(ctx)
 }
 
 // Build the server binary
@@ -94,22 +84,4 @@ func (m *Kv2) BuildServerContainer(
 		WithFile("/app/server", server).
 		WithEntrypoint([]string{"/app/server"}).
 		WithExposedPort(8080)
-}
-
-func (m *Kv2) PushContainer(
-	ctx context.Context,
-	source *dagger.Container,
-	registry string,
-	username string,
-	secret *dagger.Secret,
-) error {
-	containerVersion, err := source.Label(ctx, "org.opencontainers.image.version")
-	if err != nil {
-		return err
-	}
-
-	fullImagePath := fmt.Sprintf("%s/kv2:%s", registry, containerVersion)
-	_, err = source.WithRegistryAuth(registry, username, secret).Publish(ctx, fullImagePath)
-
-	return err
 }
