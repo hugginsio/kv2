@@ -1,0 +1,6 @@
+# https://github.com/google/yamlfmt/blob/main/docs/config-file.md
+
+formatter:
+  indent: 2
+  retain_line_breaks_single: true
+  trim_trailing_whitespace: true

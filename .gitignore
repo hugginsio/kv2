@@ -1,0 +1,5 @@
+**/.env
+*.db
+_out/
+go.work
+go.work.sum
