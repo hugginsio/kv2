@@ -27,9 +27,11 @@ jobs:
               - '**/*.go'
       - if: steps.changes.outputs.go == 'true'
         uses: dagger/dagger-for-github@8.0.0
+        name: "dagger call lint"
         with:
           call: lint
       - if: steps.changes.outputs.go == 'true'
         uses: dagger/dagger-for-github@8.0.0
+        name: "dagger call test"
         with:
           call: lint
