@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+name: Continous Integration
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+      - uses: pre-commit/action@v3.0.1
+  lint:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |-
+            go:
+              - '**/*.go'
+      - if: steps.changes.outputs.go == 'true'
+        uses: dagger/dagger-for-github@8.0.0
+        with:
+          call: lint
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    needs:
+      - lint
+      - pre-commit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |-
+            go:
+              - '**/*.go'
+      - if: steps.changes.outputs.go == 'true'
+        uses: dagger/dagger-for-github@8.0.0
+        with:
+          call: test
