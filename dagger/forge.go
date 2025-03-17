@@ -47,5 +47,5 @@ func (m *Kv2) Release(
 		return err
 	}
 
-	return err
+	return nil
 }
