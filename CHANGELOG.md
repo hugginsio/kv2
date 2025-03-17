@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/hugginsio/kv2/compare/v0.3.0...v0.4.0) (2025-03-17)
+
+
+### Bug Fixes
+
+* error in forge return ([#14](https://github.com/hugginsio/kv2/issues/14)) ([1bed30b](https://github.com/hugginsio/kv2/commit/1bed30b04eec0eb85cd4f29c6f202de870c2029a))
+
 ## [0.3.0](https://github.com/hugginsio/kv2/compare/v0.2.0...v0.3.0) (2025-03-17)
 
 
