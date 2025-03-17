@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"dagger/kv-2/internal/dagger"
+	"fmt"
 	"strings"
 )
 
@@ -35,11 +36,16 @@ func (m *Kv2) Release(
 ) error {
 	source := dag.Git("https://github.com/hugginsio/kv2.git", dagger.GitOpts{KeepGitDir: true}).Tag(tag).Tree()
 	serverContainer := m.BuildServerContainer(ctx, source).
-		WithLabel("org.opencontainers.image.version", tag)
+		WithLabel("org.opencontainers.image.version", tag).
+		WithRegistryAuth(registry, username, password)
 
-	_, err := serverContainer.
-		WithRegistryAuth(registry, username, password).
-		Publish(ctx, registry+"/"+imageName)
+	if _, err := serverContainer.Publish(ctx, fmt.Sprintf("%s/%s:%s", registry, imageName, tag)); err != nil {
+		return err
+	}
+
+	if _, err := serverContainer.Publish(ctx, fmt.Sprintf("%s/%s:latest", registry, imageName)); err != nil {
+		return err
+	}
 
 	return err
 }
