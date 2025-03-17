@@ -5,6 +5,8 @@ import (
 	"dagger/kv-2/internal/dagger"
 	"fmt"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 // Run all pull request checks.
@@ -30,22 +32,32 @@ func (m *Kv2) Release(
 	ctx context.Context,
 	tag string,
 	registry string,
+	// +optional
+	// +default="kv2"
 	imageName string,
+	// +optional
 	username string,
+	// +optional
 	password *dagger.Secret,
-) error {
+) (string, error) {
 	source := dag.Git("https://github.com/hugginsio/kv2.git", dagger.GitOpts{KeepGitDir: true}).Tag(tag).Tree()
 	serverContainer := m.BuildServerContainer(ctx, source).
-		WithLabel("org.opencontainers.image.version", tag).
-		WithRegistryAuth(registry, username, password)
+		WithLabel("org.opencontainers.image.version", tag)
+
+	if registry == "ttl.sh" {
+		imageName = uuid.NewString()
+		tag = "30m"
+	} else {
+		serverContainer = serverContainer.WithRegistryAuth(registry, username, password)
+	}
 
 	if _, err := serverContainer.Publish(ctx, fmt.Sprintf("%s/%s:%s", registry, imageName, tag)); err != nil {
-		return err
+		return "", err
 	}
 
 	if _, err := serverContainer.Publish(ctx, fmt.Sprintf("%s/%s:latest", registry, imageName)); err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return fmt.Sprintf("Successfully released %s/%s:%s", registry, imageName, tag), nil
 }
