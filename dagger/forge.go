@@ -37,9 +37,9 @@ func (m *Kv2) Release(
 	serverContainer := m.BuildServerContainer(ctx, source).
 		WithLabel("org.opencontainers.image.version", tag)
 
-	serverContainer.
+	_, err := serverContainer.
 		WithRegistryAuth(registry, username, password).
 		Publish(ctx, registry+"/"+imageName)
 
-	return nil
+	return err
 }
