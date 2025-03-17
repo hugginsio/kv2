@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/hugginsio/kv2/compare/v0.1.0...v0.2.0) (2025-03-17)
+
+
+### Bug Fixes
+
+* update release job ([#10](https://github.com/hugginsio/kv2/issues/10)) ([d68406c](https://github.com/hugginsio/kv2/commit/d68406c4b4b3db1ffeb38270e43aa065290f010a))
+
 ## 0.1.0 (2025-03-17)
 
 
