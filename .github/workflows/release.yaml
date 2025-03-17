@@ -6,7 +6,7 @@ on:
     types: [created]
 
 jobs:
-  code-qa:
+  release:
     runs-on: ubuntu-latest
     permissions:
       packages: write
