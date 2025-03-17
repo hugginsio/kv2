@@ -14,4 +14,10 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
       - uses: dagger/dagger-for-github@e47aba410ef9bb9ed81a4d2a97df31061e5e842e # 8.0.0
         with:
-          call: release
+          verb: call
+          args: release --tag=$TAG --registry=ghcr.io --image-name=$IMAGE_NAME --username=$REGISTRY_USERNAME --password=$REGISTRY_PASSWORD
+        env:
+          IMAGE_NAME: ${{ github.repository }}
+          REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY_USERNAME: ${{ github.actor }}
+          TAG: ${{ github.event.release.tag_name }}
