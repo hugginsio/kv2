@@ -28,7 +28,7 @@ func (m *Kv2) BuildServerContainer(
 ) *dagger.Container {
 	server := m.buildServer(ctx, source)
 	return dag.Container().
-		From("gcr.io/distroless/base-debian12").
+		From("gcr.io/distroless/static-debian12").
 		WithLabel("org.opencontainers.image.title", "kv2").
 		WithLabel("org.opencontainers.image.description", "Encrypted secrets management for the homelab.").
 		WithLabel("org.opencontainers.image.created", time.Now().String()).

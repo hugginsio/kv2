@@ -17,3 +17,6 @@ tasks:
     cmd: go run .
     dotenv:
       - .env
+  server:build:
+    desc: publish a development server container to ttl.sh
+    cmd: dagger call build-server-container publish --address ttl.sh/(uuidgen | str downcase):1m
