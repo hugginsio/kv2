@@ -29,6 +29,7 @@ func (m *Kv2) BuildServerContainer(
 	return dag.Container().
 		From("gcr.io/distroless/base-debian12").
 		WithLabel("org.opencontainers.image.title", "kv2").
+		WithLabel("org.opencontainers.image.description", "Encrypted secrets management for the homelab.").
 		WithLabel("org.opencontainers.image.created", time.Now().String()).
 		WithLabel("org.opencontainers.image.source", "https://github.com/hugginsio/kv2").
 		WithLabel("org.opencontainers.image.licenses", "BSD-3-Clause").
