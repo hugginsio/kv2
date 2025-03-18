@@ -15,6 +15,7 @@ func (m *Kv2) buildServer(
 	// TODO: multi arch
 	return m.devEnv(ctx, source, nil).
 		WithWorkdir("cmd/server").
+		WithEnvVariable("CGO_ENABLED", "0").
 		WithExec([]string{"go", "build", "-o", "/app/server", "."}).
 		File("/app/server")
 }
@@ -27,7 +28,7 @@ func (m *Kv2) BuildServerContainer(
 ) *dagger.Container {
 	server := m.buildServer(ctx, source)
 	return dag.Container().
-		From("gcr.io/distroless/base-debian12").
+		From("gcr.io/distroless/static-debian12").
 		WithLabel("org.opencontainers.image.title", "kv2").
 		WithLabel("org.opencontainers.image.description", "Encrypted secrets management for the homelab.").
 		WithLabel("org.opencontainers.image.created", time.Now().String()).
@@ -35,5 +36,6 @@ func (m *Kv2) BuildServerContainer(
 		WithLabel("org.opencontainers.image.licenses", "BSD-3-Clause").
 		WithFile("/app/server", server).
 		WithEntrypoint([]string{"/app/server"}).
-		WithExposedPort(8080)
+		WithExposedPort(8080).
+		WithExposedPort(80) // used for development mode ONLY
 }

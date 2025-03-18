@@ -41,11 +41,11 @@ func preflight(configuration Configuration) {
 		log.Fatalln("KV2_TS_AUTHKEY is required outside of development mode.")
 	}
 
-	if configuration.PrivateKey == "" {
+	if !configuration.DevMode && configuration.PrivateKey == "" {
 		log.Fatalln("KV2_PRIVATE_KEY is required.")
 	}
 
-	if configuration.PublicKey == "" {
+	if !configuration.DevMode && configuration.PublicKey == "" {
 		log.Fatalln("KV2_PUBLIC_KEY is required.")
 	}
 }

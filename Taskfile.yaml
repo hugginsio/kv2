@@ -17,3 +17,6 @@ tasks:
     cmd: go run .
     dotenv:
       - .env
+  server:container:
+    desc: spin up a server container in development mode
+    cmd: dagger call build-server-container with-env-variable --name KV2_DEV_MODE --value true up --ports 8080:80

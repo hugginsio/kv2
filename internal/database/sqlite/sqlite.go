@@ -8,7 +8,7 @@ import (
 
 	"git.huggins.io/kv2/api"
 	"git.huggins.io/kv2/internal/database"
-	"gorm.io/driver/sqlite"
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
 

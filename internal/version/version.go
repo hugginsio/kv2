@@ -4,7 +4,6 @@
 package version
 
 import (
-	_ "embed"
 	"fmt"
 
 	version "github.com/caarlos0/go-version"
