@@ -22,13 +22,13 @@ func RetrieveConfiguration() Configuration {
 	}
 
 	// Go ahead and run this since we don't fetch the config anywhere else.
-	Preflight(configuration)
+	preflight(configuration)
 
 	return configuration
 }
 
 // Check for misconfigurations, print warnings, etc.
-func Preflight(configuration Configuration) {
+func preflight(configuration Configuration) {
 	if configuration.DevMode {
 		log.Println("")
 		log.Println("<!> RUNNING IN DEVELOPMENT MODE         <!>")
