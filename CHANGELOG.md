@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/hugginsio/kv2/compare/v0.5.0...v0.5.1) (2025-03-18)
+
+
+### Bug Fixes
+
+* **actions:** update password reference ([#18](https://github.com/hugginsio/kv2/issues/18)) ([3db0965](https://github.com/hugginsio/kv2/commit/3db0965d9a4556fe3c19ebe395539cd991766b15)), closes [#2](https://github.com/hugginsio/kv2/issues/2)
+
 ## [0.5.0](https://github.com/hugginsio/kv2/compare/v0.4.0...v0.5.0) (2025-03-17)
 
 
