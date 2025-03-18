@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0](https://github.com/hugginsio/kv2/compare/v0.5.1...v0.6.0) (2025-03-18)
+
+
+### Features
+
+* remove CGO, use noop crypto in dev mode ([#22](https://github.com/hugginsio/kv2/issues/22)) ([a2d934b](https://github.com/hugginsio/kv2/commit/a2d934b1ffe6279c0d226ce8bea382e7acb7ea38))
+* update docs, cleanup server ([#20](https://github.com/hugginsio/kv2/issues/20)) ([a161888](https://github.com/hugginsio/kv2/commit/a16188896091a8680e7c78eff4d0e6a15b53f522))
+
 ## [0.5.1](https://github.com/hugginsio/kv2/compare/v0.5.0...v0.5.1) (2025-03-18)
 
 
