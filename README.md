@@ -11,6 +11,18 @@
 
 While these traits make `kv2` perfect for my homelab, it may not be suitable for production environments.
 
+## 📚 Documentation
+
+The full documentation is available in the [docs](./docs/) directory.
+
+## 🚀 Quickstart
+
+Alternatively, if you are just looking to move fast and break things:
+
+```sh
+docker run --rm --name kv2 -p 80:8080 -e KV2_DEV_MODE=true ghcr.io/hugginsio/kv2:latest
+```
+
 ## 🤝🏻 Thanks
 
 - [@tailscale/setec][9], which largely inspired `kv2`.

@@ -1,0 +1,13 @@
+# Compose file for kv2
+# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
+
+name: "kv2"
+services:
+  server:
+    image: "ghcr.io/hugginsio/kv2:latest"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "--max-time", "2", "http://localhost:8080/health"]
+    environment:
+      # You should really use a `.env` file for any of the environment variables.
+      - "KV2_DEV_MODE=true"
