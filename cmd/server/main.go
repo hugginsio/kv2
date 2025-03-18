@@ -10,6 +10,7 @@ import (
 
 	"git.huggins.io/kv2/internal/crypto"
 	"git.huggins.io/kv2/internal/crypto/age"
+	"git.huggins.io/kv2/internal/crypto/nocrypto"
 	"git.huggins.io/kv2/internal/database"
 	"git.huggins.io/kv2/internal/database/sqlite"
 	"git.huggins.io/kv2/internal/server"
@@ -39,13 +40,17 @@ func main() {
 	}
 
 	var crypto crypto.Crypto
-	crypto, err = age.Initialize(age.Configuration{
-		PrivateKey: appConfig.PrivateKey,
-		PublicKey:  appConfig.PublicKey,
-	})
+	if appConfig.DevMode {
+		crypto = nocrypto.Initialize()
+	} else {
+		crypto, err = age.Initialize(age.Configuration{
+			PrivateKey: appConfig.PrivateKey,
+			PublicKey:  appConfig.PublicKey,
+		})
 
-	if err != nil {
-		log.Fatalln("failed to initialize crypto:", err)
+		if err != nil {
+			log.Fatalln("failed to initialize crypto:", err)
+		}
 	}
 
 	mux := http.NewServeMux()
