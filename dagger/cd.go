@@ -15,6 +15,7 @@ func (m *Kv2) buildServer(
 	// TODO: multi arch
 	return m.devEnv(ctx, source, nil).
 		WithWorkdir("cmd/server").
+		WithEnvVariable("CGO_ENABLED", "0").
 		WithExec([]string{"go", "build", "-o", "/app/server", "."}).
 		File("/app/server")
 }

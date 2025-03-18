@@ -27,7 +27,7 @@ func main() {
 	}
 
 	if appConfig.DevMode {
-		databaseConfiguration.Dsn = "file::memory:?cache=shared"
+		databaseConfiguration.Dsn = ":memory:"
 	} else {
 		databaseConfiguration.Dsn = "kv2.db"
 	}
