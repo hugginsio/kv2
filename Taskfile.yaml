@@ -19,4 +19,4 @@ tasks:
       - .env
   server:build:
     desc: publish a development server container to ttl.sh
-    cmd: dagger call build-server-container publish --address ttl.sh/(uuidgen | str downcase):1m
+    cmd: dagger call build-server-container with-env-variable --name KV2_DEV_MODE --value true up --ports 8080:80

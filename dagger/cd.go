@@ -36,5 +36,6 @@ func (m *Kv2) BuildServerContainer(
 		WithLabel("org.opencontainers.image.licenses", "BSD-3-Clause").
 		WithFile("/app/server", server).
 		WithEntrypoint([]string{"/app/server"}).
-		WithExposedPort(8080)
+		WithExposedPort(8080).
+		WithExposedPort(80) // used for development mode ONLY
 }
