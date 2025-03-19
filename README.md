@@ -11,17 +11,71 @@
 
 While these traits make `kv2` perfect for my homelab, it may not be suitable for production environments.
 
-## 📚 Documentation
-
-The full documentation is available in the [docs](./docs/) directory.
-
 ## 🚀 Quickstart
 
-Alternatively, if you are just looking to move fast and break things:
+If you are just looking to move fast and break things, here is the server container running in development mode. No Tailscale, no persistence, and no encryption.
 
 ```sh
 docker run --rm --name kv2 -p 80:8080 -e KV2_DEV_MODE=true ghcr.io/hugginsio/kv2:latest
 ```
+
+## 📃 API
+
+The `kv2` server exposes a REST API for secrets management. It's available over port `80` over your Tailnet (or locally, for development mode). When connected to a Tailnet, port `80` on the container will not respond to requests.
+
+| Method   | Path              | Description                                  |
+|----------|-------------------|----------------------------------------------|
+| `GET`    | `/secrets`        | List all secrets and the available versions. |
+| `POST`   | `/secrets/create` | Create a new secret.                         |
+| `POST`   | `/secrets/read`   | Read the latest version of a secret.         |
+| `POST`   | `/secrets/update` | Create a new version of an existing secret.  |
+| `DELETE` | `/secrets/delete` | Delete a secret and all its versions.        |
+| `POST`   | `/secrets/revert` | Revert a secret to a previous version.       |
+
+## 🛠️ Deployment
+
+The `kv2` server is available on the GitHub Container Registry, at `ghcr.io/hugginsio/kv2`. While the `:latest` tag is available, you should really use a version tag (or even better, a hash) to ensure stability and security.
+
+The best way to use `kv2` is most likely going to involve Docker Compose. Here is an example:
+
+```yaml
+name: "kv2"
+services:
+  server:
+    image: "ghcr.io/hugginsio/kv2:latest"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "--max-time", "2", "http://localhost:8080/health"]
+    env_file:
+      - .env
+```
+
+Note that this configuration assumes you have your configuration set up in the `.env` file.
+
+### ⚙️ Configuration
+
+The `kv2` server configuration is controlled through environment variables. The following variables are supported:
+
+| Variable          | Description                                                                                 | Default Value |
+| ----------------- | ------------------------------------------------------------------------------------------- | ------------- |
+| `KV2_DEV_MODE`    | If enabled, the server will use an in-memory database and not attempt a Tailnet connection. | `false`       |
+| `KV2_PRIVATE_KEY` | The age private key used to decrypt secrets (`AGE-SECRET-KEY*`).                            | `""`          |
+| `KV2_PUBLIC_KEY`  | The age public key used to decrypt secrets (`age1*`).                                       | `""`          |
+| `KV2_TS_AUTHKEY`  | The authentication key used to connect to the Tailnet.                                      | `""`          |
+
+#### 🔑 External KMS Support
+
+The `kv2` server can automatically fetch secrets from external key management systems for enhanced security and flexibility. The following configuration variables support external KMS references:
+
+- `KV2_PRIVATE_KEY`
+- `KV2_PUBLIC_KEY`
+- `KV2_TS_AUTHKEY`
+
+The following key management systems are supported:
+
+- **Google Cloud Secret Manager**: `gsm://projects/<project_id>/secrets/<secret_name>`
+
+When a valid KMS prefix is detected, the server will automatically attempt to retrieve the latest version of the secret.
 
 ## 🤝🏻 Thanks
 
