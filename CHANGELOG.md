@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/hugginsio/kv2/compare/v0.6.0...v0.7.0) (2025-03-19)
+
+
+### Features
+
+* add external KMS support and overhaul docs ([#25](https://github.com/hugginsio/kv2/issues/25)) ([a8b6a6c](https://github.com/hugginsio/kv2/commit/a8b6a6ccaf4247963ff5678a29166759e69df116))
+
 ## [0.6.0](https://github.com/hugginsio/kv2/compare/v0.5.1...v0.6.0) (2025-03-18)
 
 
