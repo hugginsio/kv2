@@ -21,12 +21,7 @@ func Retrieve(id string) (string, error) {
 
 	defer client.Close()
 
-	secret, err := client.GetSecret(ctx, &secretmanagerpb.GetSecretRequest{Name: id})
-	if err != nil {
-		return "", err
-	}
-
-	version, err := client.AccessSecretVersion(ctx, &secretmanagerpb.AccessSecretVersionRequest{Name: fmt.Sprintf("%s/versions/latest", secret.Name)})
+	version, err := client.AccessSecretVersion(ctx, &secretmanagerpb.AccessSecretVersionRequest{Name: fmt.Sprintf("%s/versions/latest", id)})
 	if err != nil {
 		return "", err
 	}
