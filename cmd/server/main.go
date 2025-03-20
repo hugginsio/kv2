@@ -8,6 +8,7 @@ import (
 	"net"
 	"net/http"
 
+	"git.huggins.io/kv2/internal/backup"
 	"git.huggins.io/kv2/internal/crypto"
 	"git.huggins.io/kv2/internal/crypto/age"
 	"git.huggins.io/kv2/internal/crypto/nocrypto"
@@ -31,6 +32,19 @@ func main() {
 		databaseConfiguration.Dsn = ":memory:"
 	} else {
 		databaseConfiguration.Dsn = "kv2.db"
+	}
+
+	var cloudStorage backup.CloudBackup
+	if appConfig.CloudStorage != "" {
+		if provider, err := backup.DetermineStorageProvider(appConfig.CloudStorage); err != nil {
+			log.Fatal("Failed to configure cloud storage provider: ", err)
+		} else {
+			cloudStorage = *provider
+		}
+
+		if !cloudStorage.Restore() {
+			log.Println("No backup found for restore.")
+		}
 	}
 
 	var database database.Database

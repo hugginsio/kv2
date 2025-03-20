@@ -11,19 +11,21 @@ import (
 )
 
 type Configuration struct {
-	DevMode    bool
-	PrivateKey string
-	PublicKey  string
-	TsAuthKey  string
+	CloudStorage string
+	DevMode      bool
+	PrivateKey   string
+	PublicKey    string
+	TsAuthKey    string
 }
 
 // Retrieves the configuration from the environment.
 func RetrieveConfiguration() Configuration {
 	configuration := Configuration{
-		DevMode:    os.Getenv("KV2_DEV_MODE") == "true",
-		PrivateKey: os.Getenv("KV2_PRIVATE_KEY"),
-		PublicKey:  os.Getenv("KV2_PUBLIC_KEY"),
-		TsAuthKey:  os.Getenv("KV2_TS_AUTHKEY"),
+		CloudStorage: os.Getenv("KV2_CLOUD_STORAGE"),
+		DevMode:      os.Getenv("KV2_DEV_MODE") == "true",
+		PrivateKey:   os.Getenv("KV2_PRIVATE_KEY"),
+		PublicKey:    os.Getenv("KV2_PUBLIC_KEY"),
+		TsAuthKey:    os.Getenv("KV2_TS_AUTHKEY"),
 	}
 
 	// Go ahead and run this since we don't fetch the config anywhere else.

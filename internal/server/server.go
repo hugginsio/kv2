@@ -1,3 +1,6 @@
+// Copyright (c) Kyle Huggins
+// SPDX-License-Identifier: BSD-3-Clause
+
 package server
 
 import (
@@ -5,17 +8,20 @@ import (
 	"net/http"
 
 	"git.huggins.io/kv2/api"
+	"git.huggins.io/kv2/internal/backup"
 	"git.huggins.io/kv2/internal/crypto"
 	"git.huggins.io/kv2/internal/database"
 )
 
 type Configuration struct {
-	Crypto   *crypto.Crypto
-	Database *database.Database
-	Mux      *http.ServeMux
+	CloudBackup *backup.CloudBackup
+	Crypto      *crypto.Crypto
+	Database    *database.Database
+	Mux         *http.ServeMux
 }
 
 type HttpServer struct {
+	backup   backup.CloudBackup
 	crypto   crypto.Crypto
 	database database.Database
 }
@@ -23,6 +29,7 @@ type HttpServer struct {
 // Initialize an HTTP server.
 func Initialize(config Configuration) *HttpServer {
 	server := &HttpServer{
+		backup:   *config.CloudBackup,
 		crypto:   *config.Crypto,
 		database: *config.Database,
 	}
@@ -36,6 +43,8 @@ func Initialize(config Configuration) *HttpServer {
 
 	return server
 }
+
+// TODO: certain methods need to hook into the cloud backup provider
 
 // Lists all secrets in the database.
 func (hs *HttpServer) list(w http.ResponseWriter, r *http.Request) {
