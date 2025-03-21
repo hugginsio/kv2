@@ -3,14 +3,30 @@
 
 package backup
 
-import "errors"
+import (
+	"errors"
+	"regexp"
+	"strings"
+
+	"git.huggins.io/kv2/internal/backup/gcs"
+)
 
 type CloudBackup interface {
-	Restore() bool
+	Restore() error
 }
 
-func DetermineStorageProvider(path string) (*CloudBackup, error) {
-	// TODO: impl (switch? fail on invalid?)
-	// there should be a config string by the time we get here
-	return nil, errors.New("not implemented")
+func DetermineStorageProvider(value string) (*CloudBackup, error) {
+	r := regexp.MustCompile(`[^:]*`)
+	match := r.FindString(value)
+	location := strings.TrimPrefix(value, match+"://")
+
+	var cloudBackup CloudBackup
+	switch match {
+	case "gcs":
+		cloudBackup = gcs.Initialize(gcs.Configuration{BucketName: location})
+	default:
+		return nil, errors.New("invalid provider \"" + match + "\"")
+	}
+
+	return &cloudBackup, nil
 }

@@ -32,3 +32,7 @@ type ValueRecord struct {
 	Value          []byte
 	Version        api.SecretVersion
 }
+
+type ServerMetadata struct {
+	CreatedAt int64
+}

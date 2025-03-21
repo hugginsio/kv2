@@ -6,16 +6,18 @@ package main
 import (
 	"log"
 	"os"
+	"path"
 
 	"git.huggins.io/kv2/internal/kms"
 )
 
 type Configuration struct {
-	CloudStorage string
-	DevMode      bool
-	PrivateKey   string
-	PublicKey    string
-	TsAuthKey    string
+	CloudStorage     string
+	ConfigurationDir string
+	DevMode          bool
+	PrivateKey       string
+	PublicKey        string
+	TsAuthKey        string
 }
 
 // Retrieves the configuration from the environment.
@@ -29,9 +31,7 @@ func RetrieveConfiguration() Configuration {
 	}
 
 	// Go ahead and run this since we don't fetch the config anywhere else.
-	configuration = preflight(configuration)
-
-	return configuration
+	return preflight(configuration)
 }
 
 // Check for misconfigurations, print warnings, etc.
@@ -60,6 +60,12 @@ func preflight(configuration Configuration) Configuration {
 		log.Fatalln("KV2_PUBLIC_KEY is required.")
 	} else {
 		configuration.PublicKey = kms.KmsMiddleware(configuration.PublicKey)
+	}
+
+	if value, err := os.UserConfigDir(); err != nil {
+		log.Fatalf("Failed to get user config dir: %v", err)
+	} else {
+		configuration.ConfigurationDir = path.Join(value, "kv2")
 	}
 
 	return configuration

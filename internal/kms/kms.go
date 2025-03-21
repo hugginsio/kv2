@@ -21,11 +21,12 @@ type KeyManagementSystem interface {
 func KmsMiddleware(value string) string {
 	r := regexp.MustCompile(`[^:]*`)
 	match := r.FindString(value)
+	title := strings.TrimPrefix(value, match+"://")
 
 	var result string
 	switch match {
 	case "gsm":
-		if key, err := gsm.Retrieve(strings.TrimPrefix(value, match+"://")); err != nil {
+		if key, err := gsm.Retrieve(title); err != nil {
 			log.Fatalf("Failed to retrieve key from GSM: %v", err)
 		} else {
 			result = key

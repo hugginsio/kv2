@@ -13,7 +13,19 @@ import (
 	"google.golang.org/api/iterator"
 )
 
-func Restore() error {
+type Configuration struct {
+	BucketName string
+}
+
+type GoogleCloudStorage struct {
+	config Configuration
+}
+
+func Initialize(config Configuration) *GoogleCloudStorage {
+	return &GoogleCloudStorage{config: config}
+}
+
+func (gcs *GoogleCloudStorage) Restore() error {
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
@@ -22,15 +34,13 @@ func Restore() error {
 
 	defer client.Close()
 
-	// Query for objects with prefix "kv2.db"
-	query := &storage.Query{Prefix: "kv2.db"}
+	query := &storage.Query{Prefix: "kv2_"}
 	query.SetAttrSelection([]string{"Name", "Updated"})
 
 	var mostRecent *storage.ObjectAttrs
 	var mostRecentTime time.Time
 
-	// TODO: config
-	it := client.Bucket("kv2-backup").Objects(ctx, query)
+	it := client.Bucket(gcs.config.BucketName).Objects(ctx, query)
 	for {
 		attrs, err := it.Next()
 		if err == iterator.Done {
