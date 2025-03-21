@@ -26,8 +26,9 @@ func main() {
 
 	appConfig := RetrieveConfiguration()
 
+	defaultDatabasePath := fmt.Sprintf("%s/kv2.db", appConfig.ConfigurationDir)
 	databaseConfiguration := sqlite.Configuration{
-		Dsn: fmt.Sprintf("file:%s/kv2.db", appConfig.ConfigurationDir),
+		Dsn: fmt.Sprintf("file:%s", defaultDatabasePath),
 	}
 
 	if appConfig.DevMode {
@@ -36,13 +37,13 @@ func main() {
 
 	var cloudStorage backup.CloudBackup
 	if !appConfig.DevMode && appConfig.CloudStorage != "" {
-		if provider, err := backup.DetermineStorageProvider(appConfig.CloudStorage); err != nil {
+		if provider, err := backup.DetermineStorageProvider(appConfig.CloudStorage, defaultDatabasePath); err != nil {
 			log.Fatal("Failed to configure cloud storage provider: ", err)
 		} else {
 			cloudStorage = *provider
 		}
 
-		if _, err := os.Stat(fmt.Sprintf("%s/kv2.db", appConfig.ConfigurationDir)); !os.IsNotExist(err) {
+		if _, err := os.Stat(defaultDatabasePath); !os.IsNotExist(err) {
 			log.Println("Existing database found, skipping restore")
 		} else {
 			if err := cloudStorage.Restore(); err != nil {

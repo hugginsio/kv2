@@ -14,7 +14,8 @@ import (
 )
 
 type Configuration struct {
-	BucketName string
+	BucketName      string
+	DestinationPath string
 }
 
 type GoogleCloudStorage struct {
@@ -60,6 +61,8 @@ func (gcs *GoogleCloudStorage) Restore() error {
 	if mostRecent == nil {
 		return fmt.Errorf("no kv2.db files found in bucket")
 	}
+
+	// TODO: if file found, retrieve its contents and persist to the disk
 
 	return nil
 }

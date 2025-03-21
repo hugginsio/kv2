@@ -15,7 +15,7 @@ type CloudBackup interface {
 	Restore() error
 }
 
-func DetermineStorageProvider(value string) (*CloudBackup, error) {
+func DetermineStorageProvider(value string, destinationPath string) (*CloudBackup, error) {
 	r := regexp.MustCompile(`[^:]*`)
 	match := r.FindString(value)
 	location := strings.TrimPrefix(value, match+"://")
@@ -23,7 +23,7 @@ func DetermineStorageProvider(value string) (*CloudBackup, error) {
 	var cloudBackup CloudBackup
 	switch match {
 	case "gcs":
-		cloudBackup = gcs.Initialize(gcs.Configuration{BucketName: location})
+		cloudBackup = gcs.Initialize(gcs.Configuration{BucketName: location, DestinationPath: destinationPath})
 	default:
 		return nil, errors.New("invalid provider \"" + match + "\"")
 	}
