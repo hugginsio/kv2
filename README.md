@@ -56,12 +56,13 @@ Note that this configuration assumes you have your configuration set up in the `
 
 The `kv2` server configuration is controlled through environment variables. The following variables are supported:
 
-| Variable          | Description                                                                                 | Default Value |
-| ----------------- | ------------------------------------------------------------------------------------------- | ------------- |
-| `KV2_DEV_MODE`    | If enabled, the server will use an in-memory database and not attempt a Tailnet connection. | `false`       |
-| `KV2_PRIVATE_KEY` | The age private key used to decrypt secrets (`AGE-SECRET-KEY*`).                            | `""`          |
-| `KV2_PUBLIC_KEY`  | The age public key used to encrypt secrets (`age1*`).                                       | `""`          |
-| `KV2_TS_AUTHKEY`  | The authentication key used to connect to the Tailnet.                                      | `""`          |
+| Variable            | Description                                                                                 |
+| ------------------- | ------------------------------------------------------------------------------------------- |
+| `KV2_DEV_MODE`      | If enabled, the server will use an in-memory database and not attempt a Tailnet connection. |
+| `KV2_PRIVATE_KEY`   | The age private key used to decrypt secrets (`AGE-SECRET-KEY*`).                            |
+| `KV2_PUBLIC_KEY`    | The age public key used to encrypt secrets (`age1*`).                                       |
+| `KV2_TS_AUTHKEY`    | The authentication key used to connect to the Tailnet.                                      |
+| `KV2_CLOUD_STORAGE` | The cloud storage provider and path to use for database backup & restore.                   |
 
 #### 🔑 External KMS Support
 
@@ -73,9 +74,19 @@ The `kv2` server can automatically fetch secrets from external key management sy
 
 The following key management systems are supported:
 
-- **Google Cloud Secret Manager**: `gsm://projects/<project_id>/secrets/<secret_name>`
+- **Google Cloud Secret Manager**: `gsm://projects/<project_id>/secrets/<secret_name>` (requires container ADC access)
 
 When a valid KMS prefix is detected, the server will automatically attempt to retrieve the latest version of the secret.
+
+#### ☁️ Cloud Storage Support
+
+The `kv2` server can automatically backup & restore the SQLite database. If this variable is set and no database is found on server startup, the specified provider will attempt to pull down the latest version of `kv2.db` from the storage location.
+
+The following events trigger the backup mechanism:
+
+- Secret creation
+- Secret deletion
+- Secret reverts
 
 ## 🤝🏻 Thanks
 
