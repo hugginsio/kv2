@@ -5,7 +5,6 @@ package sqlite
 
 import (
 	"log"
-	"time"
 
 	"git.huggins.io/kv2/api"
 	"git.huggins.io/kv2/internal/database"
@@ -29,19 +28,8 @@ func Initialize(configuration Configuration) (*SqliteDatabase, error) {
 		return nil, err
 	}
 
-	if err := db.AutoMigrate(&database.SecretRecord{}, &database.ValueRecord{}, &database.ServerMetadata{}); err != nil {
+	if err := db.AutoMigrate(&database.SecretRecord{}, &database.ValueRecord{}); err != nil {
 		return nil, err
-	}
-
-	var meta []database.ServerMetadata
-	if err := db.Find(&meta).Error; err != nil {
-		return nil, err
-	}
-
-	if len(meta) == 0 {
-		if err := db.Create(&database.ServerMetadata{CreatedAt: time.Now().Unix()}).Error; err != nil {
-			return nil, err
-		}
 	}
 
 	return &SqliteDatabase{sql: db}, nil
