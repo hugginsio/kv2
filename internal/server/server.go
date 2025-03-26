@@ -1,21 +1,28 @@
+// Copyright (c) Kyle Huggins
+// SPDX-License-Identifier: BSD-3-Clause
+
 package server
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"git.huggins.io/kv2/api"
+	"git.huggins.io/kv2/internal/backup"
 	"git.huggins.io/kv2/internal/crypto"
 	"git.huggins.io/kv2/internal/database"
 )
 
 type Configuration struct {
-	Crypto   *crypto.Crypto
-	Database *database.Database
-	Mux      *http.ServeMux
+	CloudBackup *backup.CloudBackup
+	Crypto      *crypto.Crypto
+	Database    *database.Database
+	Mux         *http.ServeMux
 }
 
 type HttpServer struct {
+	backup   backup.CloudBackup
 	crypto   crypto.Crypto
 	database database.Database
 }
@@ -23,6 +30,7 @@ type HttpServer struct {
 // Initialize an HTTP server.
 func Initialize(config Configuration) *HttpServer {
 	server := &HttpServer{
+		backup:   *config.CloudBackup,
 		crypto:   *config.Crypto,
 		database: *config.Database,
 	}
@@ -33,6 +41,7 @@ func Initialize(config Configuration) *HttpServer {
 	config.Mux.HandleFunc("/secrets/update", server.update)
 	config.Mux.HandleFunc("/secrets/delete", server.delete)
 	config.Mux.HandleFunc("/secrets/revert", server.revert)
+	config.Mux.HandleFunc("/secrets/backup", server.createBackup)
 
 	return server
 }
@@ -184,4 +193,31 @@ func (hs *HttpServer) revert(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+// Create a backup using the configured provider.
+func (hs *HttpServer) createBackup(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var request api.BackupRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != io.EOF {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if request.Name == "" {
+		request.Name = "kv2.db"
+		return
+	}
+
+	if err := hs.backup.Backup(request.Name); err != nil {
+		w.Header().Set("Content-Type", "text/plain")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
 }

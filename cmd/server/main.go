@@ -4,10 +4,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"net/http"
+	"os"
 
+	"git.huggins.io/kv2/internal/backup"
+	"git.huggins.io/kv2/internal/backup/nobackup"
 	"git.huggins.io/kv2/internal/crypto"
 	"git.huggins.io/kv2/internal/crypto/age"
 	"git.huggins.io/kv2/internal/crypto/nocrypto"
@@ -23,14 +27,30 @@ func main() {
 
 	appConfig := RetrieveConfiguration()
 
+	defaultDatabasePath := fmt.Sprintf("%s/kv2.db", appConfig.ConfigurationDir)
 	databaseConfiguration := sqlite.Configuration{
-		Dsn: "kv2.db",
+		Dsn: fmt.Sprintf("file:%s", defaultDatabasePath),
 	}
 
 	if appConfig.DevMode {
 		databaseConfiguration.Dsn = ":memory:"
-	} else {
-		databaseConfiguration.Dsn = "kv2.db"
+	}
+
+	var cloudStorage backup.CloudBackup = nobackup.Initialize()
+	if !appConfig.DevMode && appConfig.CloudStorage != "" {
+		if provider, err := backup.DetermineStorageProvider(appConfig.CloudStorage, defaultDatabasePath); err != nil {
+			log.Fatal("Failed to configure cloud storage provider: ", err)
+		} else {
+			cloudStorage = *provider
+		}
+
+		if _, err := os.Stat(defaultDatabasePath); !os.IsNotExist(err) {
+			log.Println("Existing database found, skipping restore")
+		} else {
+			if err := cloudStorage.Restore(); err != nil {
+				log.Println("Restore failed:", err)
+			}
+		}
 	}
 
 	var database database.Database
@@ -55,9 +75,10 @@ func main() {
 
 	mux := http.NewServeMux()
 	serverConfig := server.Configuration{
-		Crypto:   &crypto,
-		Database: &database,
-		Mux:      mux,
+		CloudBackup: &cloudStorage,
+		Crypto:      &crypto,
+		Database:    &database,
+		Mux:         mux,
 	}
 
 	_ = server.Initialize(serverConfig)

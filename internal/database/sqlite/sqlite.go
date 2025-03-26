@@ -22,7 +22,7 @@ type SqliteDatabase struct {
 
 // Initialize a sqlite database for secret storage.
 func Initialize(configuration Configuration) (*SqliteDatabase, error) {
-	log.Println("Initializing database (sqlite)")
+	log.Println("Initializing database state path", configuration.Dsn)
 	db, err := gorm.Open(sqlite.Open(configuration.Dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err
