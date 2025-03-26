@@ -80,13 +80,9 @@ When a valid KMS prefix is detected, the server will automatically attempt to re
 
 #### ☁️ Cloud Storage Support
 
-The `kv2` server can automatically backup & restore the SQLite database. If this variable is set and no database is found on server startup, the specified provider will attempt to pull down the latest version of `kv2.db` from the storage location.
+The `kv2` server can automatically restore the SQLite database. If configured - and no database is found on server startup - the specified provider will attempt to pull down the latest version of `kv2*.db` from the storage location.
 
-The following events trigger the backup mechanism:
-
-- Secret creation
-- Secret deletion
-- Secret reverts
+While restore operations are automatic, backups are not. You must manually trigger backups using the `/secrets/backup` endpoint.
 
 ## 🤝🏻 Thanks
 
