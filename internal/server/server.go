@@ -5,6 +5,7 @@ package server
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"git.huggins.io/kv2/api"
@@ -40,11 +41,10 @@ func Initialize(config Configuration) *HttpServer {
 	config.Mux.HandleFunc("/secrets/update", server.update)
 	config.Mux.HandleFunc("/secrets/delete", server.delete)
 	config.Mux.HandleFunc("/secrets/revert", server.revert)
+	config.Mux.HandleFunc("/secrets/backup", server.createBackup)
 
 	return server
 }
-
-// TODO: certain methods need to hook into the cloud backup provider
 
 // Lists all secrets in the database.
 func (hs *HttpServer) list(w http.ResponseWriter, r *http.Request) {
@@ -193,4 +193,31 @@ func (hs *HttpServer) revert(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+}
+
+// Create a backup using the configured provider.
+func (hs *HttpServer) createBackup(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var request api.BackupRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != io.EOF {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if request.Name == "" {
+		request.Name = "kv2.db"
+		return
+	}
+
+	if err := hs.backup.Backup(request.Name); err != nil {
+		w.Header().Set("Content-Type", "text/plain")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
 }

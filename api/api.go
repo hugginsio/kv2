@@ -48,3 +48,7 @@ type DeleteSecretRequest struct {
 type RevertSecretRequest struct {
 	Key string
 }
+
+type BackupRequest struct {
+	Name string
+}
