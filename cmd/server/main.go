@@ -11,6 +11,7 @@ import (
 	"os"
 
 	"git.huggins.io/kv2/internal/backup"
+	"git.huggins.io/kv2/internal/backup/nobackup"
 	"git.huggins.io/kv2/internal/crypto"
 	"git.huggins.io/kv2/internal/crypto/age"
 	"git.huggins.io/kv2/internal/crypto/nocrypto"
@@ -35,7 +36,7 @@ func main() {
 		databaseConfiguration.Dsn = ":memory:"
 	}
 
-	var cloudStorage backup.CloudBackup
+	var cloudStorage backup.CloudBackup = nobackup.Initialize()
 	if !appConfig.DevMode && appConfig.CloudStorage != "" {
 		if provider, err := backup.DetermineStorageProvider(appConfig.CloudStorage, defaultDatabasePath); err != nil {
 			log.Fatal("Failed to configure cloud storage provider: ", err)
