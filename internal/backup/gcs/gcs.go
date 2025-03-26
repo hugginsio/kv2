@@ -6,6 +6,7 @@ package gcs
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"time"
@@ -60,6 +61,8 @@ func (gcs *GoogleCloudStorage) Backup(name string) error {
 }
 
 func (gcs *GoogleCloudStorage) Restore() error {
+	log.Println("Attempting database restore")
+
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
@@ -68,7 +71,7 @@ func (gcs *GoogleCloudStorage) Restore() error {
 
 	defer client.Close()
 
-	query := &storage.Query{Prefix: "kv2_"}
+	query := &storage.Query{Prefix: "kv2"}
 	query.SetAttrSelection([]string{"Name", "Updated"})
 
 	var mostRecent *storage.ObjectAttrs
@@ -95,7 +98,23 @@ func (gcs *GoogleCloudStorage) Restore() error {
 		return fmt.Errorf("no kv2.db files found in bucket")
 	}
 
-	// TODO: if file found, retrieve its contents and persist to the disk
+	reader, err := client.Bucket(gcs.config.BucketName).Object(mostRecent.Name).NewReader(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to create GCS reader: %v", err)
+	}
+
+	defer reader.Close()
+
+	fileBytes, err := io.ReadAll(reader)
+	if err != nil {
+		return fmt.Errorf("failed to read file from GCS: %v", err)
+	}
+
+	if err := os.WriteFile(gcs.config.FilePath, fileBytes, 0644); err != nil {
+		return fmt.Errorf("failed to write file to disk: %v", err)
+	}
+
+	log.Println("Database restored successfully")
 
 	return nil
 }
