@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"log"
 	"net"
 
+	"github.com/rs/zerolog/log"
 	"tailscale.com/tsnet"
 )
 
@@ -18,17 +18,13 @@ func Tsnet(config Configuration) net.Listener {
 		UserLogf:  log.Printf,
 	}
 
-	if config.DevMode {
-		server.Logf = log.Printf
-	}
-
 	ln, err := server.Listen("tcp", ":80")
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal().Err(err).Str("addr", ln.Addr().String()).Msg("failed to listen")
 	}
 
 	if _, err := server.Up(context.Background()); err != nil {
-		log.Fatalln(err)
+		log.Fatal().Err(err).Msg("failed to start tsnet")
 	}
 
 	return ln

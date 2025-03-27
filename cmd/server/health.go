@@ -2,10 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"git.huggins.io/kv2/api"
+	"github.com/rs/zerolog/log"
 )
 
 type HealthServer struct {
@@ -20,8 +20,10 @@ func ServeHealthEndpoint() {
 	}
 
 	srv.Mux.HandleFunc("/health", srv.getHealth)
+
+	log.Info().Str("addr", srv.Port).Msg("serving health endpoint")
 	if err := http.ListenAndServe(srv.Port, srv.Mux); err != nil {
-		log.Fatalln("failed to serve health endpoint:", err)
+		log.Error().Err(err).Msg("failed to serve health endpoint")
 	}
 }
 
