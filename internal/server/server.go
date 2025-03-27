@@ -53,6 +53,8 @@ func (hs *HttpServer) list(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "text/plain")
+
 	secrets, err := hs.database.List()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -71,6 +73,8 @@ func (hs *HttpServer) create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "text/plain")
+
 	var request api.CreateSecretRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -79,7 +83,6 @@ func (hs *HttpServer) create(w http.ResponseWriter, r *http.Request) {
 
 	enc, err := hs.crypto.Encrypt(request.Value)
 	if err != nil {
-		w.Header().Set("Content-Type", "text/plain")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -87,11 +90,11 @@ func (hs *HttpServer) create(w http.ResponseWriter, r *http.Request) {
 	request.Value = enc
 
 	if err := hs.database.Create(request); err != nil {
-		w.Header().Set("Content-Type", "text/plain")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	w.Header().Del("Content-Type")
 	w.WriteHeader(http.StatusCreated)
 }
 
@@ -102,6 +105,8 @@ func (hs *HttpServer) read(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "text/plain")
+
 	var request api.ReadSecretRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -110,14 +115,12 @@ func (hs *HttpServer) read(w http.ResponseWriter, r *http.Request) {
 
 	secret, err := hs.database.Read(request)
 	if err != nil {
-		w.Header().Set("Content-Type", "text/plain")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	dec, err := hs.crypto.Decrypt(secret.Value)
 	if err != nil {
-		w.Header().Set("Content-Type", "text/plain")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -136,6 +139,8 @@ func (hs *HttpServer) update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "text/plain")
+
 	var request api.UpdateSecretRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -143,11 +148,11 @@ func (hs *HttpServer) update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := hs.database.Update(request); err != nil {
-		w.Header().Set("Content-Type", "text/plain")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	w.Header().Del("Content-Type")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -158,6 +163,8 @@ func (hs *HttpServer) delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "text/plain")
+
 	var request api.DeleteSecretRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -165,11 +172,11 @@ func (hs *HttpServer) delete(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := hs.database.Delete(request); err != nil {
-		w.Header().Set("Content-Type", "text/plain")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	w.Header().Del("Content-Type")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -180,6 +187,8 @@ func (hs *HttpServer) revert(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Content-Type", "text/plain")
+
 	var request api.RevertSecretRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -187,11 +196,11 @@ func (hs *HttpServer) revert(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := hs.database.Revert(request); err != nil {
-		w.Header().Set("Content-Type", "text/plain")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	w.Header().Del("Content-Type")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -201,6 +210,8 @@ func (hs *HttpServer) createBackup(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusMethodNotAllowed)
 		return
 	}
+
+	w.Header().Set("Content-Type", "text/plain")
 
 	var request api.BackupRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != io.EOF {
@@ -214,10 +225,10 @@ func (hs *HttpServer) createBackup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := hs.backup.Backup(request.Name); err != nil {
-		w.Header().Set("Content-Type", "text/plain")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	w.Header().Del("Content-Type")
 	w.WriteHeader(http.StatusCreated)
 }

@@ -29,11 +29,11 @@ func (m *Kv2) BuildServerContainer(
 	server := m.buildServer(ctx, source)
 	return dag.Container().
 		From("gcr.io/distroless/static-debian12").
-		WithLabel("org.opencontainers.image.title", "kv2").
-		WithLabel("org.opencontainers.image.description", "Encrypted secrets management for the homelab.").
-		WithLabel("org.opencontainers.image.created", time.Now().String()).
-		WithLabel("org.opencontainers.image.source", "https://github.com/hugginsio/kv2").
-		WithLabel("org.opencontainers.image.licenses", "BSD-3-Clause").
+		WithAnnotation("org.opencontainers.image.title", "kv2").
+		WithAnnotation("org.opencontainers.image.description", "Encrypted secrets management for the homelab.").
+		WithAnnotation("org.opencontainers.image.created", time.Now().String()).
+		WithAnnotation("org.opencontainers.image.source", "https://github.com/hugginsio/kv2").
+		WithAnnotation("org.opencontainers.image.licenses", "BSD-3-Clause").
 		WithFile("/app/server", server).
 		WithEntrypoint([]string{"/app/server"}).
 		WithExposedPort(8080).
