@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.7.0](https://github.com/hugginsio/kv2/compare/v0.6.0...v0.7.0) (2025-03-27)
+
+
+### Features
+
+* add external KMS support and overhaul docs ([#25](https://github.com/hugginsio/kv2/issues/25)) ([a8b6a6c](https://github.com/hugginsio/kv2/commit/a8b6a6ccaf4247963ff5678a29166759e69df116))
+* cloud storage support ([#27](https://github.com/hugginsio/kv2/issues/27)) ([fe5ef6c](https://github.com/hugginsio/kv2/commit/fe5ef6cd80ca38b841251fdfe4587f228982d6b1)), closes [#3](https://github.com/hugginsio/kv2/issues/3)
+* update docs & API responses ([#28](https://github.com/hugginsio/kv2/issues/28)) ([212a2b7](https://github.com/hugginsio/kv2/commit/212a2b70ccae506c85d98cd079a4e0709c43e95e))
+
 ## [0.6.0](https://github.com/hugginsio/kv2/compare/v0.5.1...v0.6.0) (2025-03-18)
 
 
