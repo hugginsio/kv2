@@ -4,11 +4,10 @@
 package sqlite
 
 import (
-	"log"
-
 	"git.huggins.io/kv2/api"
 	"git.huggins.io/kv2/internal/database"
 	"github.com/glebarez/sqlite"
+	"github.com/rs/zerolog/log"
 	"gorm.io/gorm"
 )
 
@@ -22,7 +21,8 @@ type SqliteDatabase struct {
 
 // Initialize a sqlite database for secret storage.
 func Initialize(configuration Configuration) (*SqliteDatabase, error) {
-	log.Println("Initializing database state path", configuration.Dsn)
+	log.Info().Str("path", configuration.Dsn).Msg("initializing database state")
+
 	db, err := gorm.Open(sqlite.Open(configuration.Dsn), &gorm.Config{})
 	if err != nil {
 		return nil, err

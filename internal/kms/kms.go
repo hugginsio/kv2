@@ -5,11 +5,11 @@
 package kms
 
 import (
-	"log"
 	"regexp"
 	"strings"
 
 	"git.huggins.io/kv2/internal/kms/gsm"
+	"github.com/rs/zerolog/log"
 )
 
 type KeyManagementSystem interface {
@@ -27,7 +27,7 @@ func KmsMiddleware(value string) string {
 	switch match {
 	case "gsm":
 		if key, err := gsm.Retrieve(title); err != nil {
-			log.Fatalf("Failed to retrieve key from GSM: %v", err)
+			log.Fatal().Err(err).Msg("failed to retrieve key from GSM")
 		} else {
 			result = key
 		}
