@@ -5,7 +5,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"net/http"
 	"os"
@@ -19,11 +18,11 @@ import (
 	"git.huggins.io/kv2/internal/database/sqlite"
 	"git.huggins.io/kv2/internal/server"
 	"git.huggins.io/kv2/internal/version"
+	"github.com/rs/zerolog/log"
 )
 
 func main() {
-	log.Println(version.Line())
-	log.Println(version.Seymour())
+	log.Info().Str("version", version.VersionInfo().GitVersion).Str("commit", version.VersionInfo().GitCommit).Str("platform", version.VersionInfo().Platform).Msg("kv2 is starting")
 
 	appConfig := RetrieveConfiguration()
 
@@ -39,16 +38,16 @@ func main() {
 	var cloudStorage backup.CloudBackup = nobackup.Initialize()
 	if !appConfig.DevMode && appConfig.CloudStorage != "" {
 		if provider, err := backup.DetermineStorageProvider(appConfig.CloudStorage, defaultDatabasePath); err != nil {
-			log.Fatal("Failed to configure cloud storage provider: ", err)
+			log.Fatal().Err(err).Msg("failed to configure cloud storage provider")
 		} else {
 			cloudStorage = *provider
 		}
 
 		if _, err := os.Stat(defaultDatabasePath); !os.IsNotExist(err) {
-			log.Println("Existing database found, skipping restore")
+			log.Info().Msg("database found, skipping restore")
 		} else {
 			if err := cloudStorage.Restore(); err != nil {
-				log.Println("Restore failed:", err)
+				log.Fatal().Err(err).Msg("database restore failed")
 			}
 		}
 	}
@@ -56,7 +55,7 @@ func main() {
 	var database database.Database
 	database, err := sqlite.Initialize(databaseConfiguration)
 	if err != nil {
-		log.Fatalln("failed to load database:", err)
+		log.Fatal().Err(err).Msg("failed to load database")
 	}
 
 	var crypto crypto.Crypto
@@ -69,7 +68,7 @@ func main() {
 		})
 
 		if err != nil {
-			log.Fatalln("failed to initialize crypto:", err)
+			log.Fatal().Err(err).Msg("failed to initialize crypto")
 		}
 	}
 
@@ -87,7 +86,7 @@ func main() {
 	if appConfig.DevMode {
 		ln, err := net.Listen("tcp", ":80")
 		if err != nil {
-			log.Fatalln(err)
+			log.Fatal().Err(err).Str("addr", ln.Addr().String()).Msg("failed to listen")
 		}
 
 		listener = ln
@@ -97,8 +96,8 @@ func main() {
 
 	go ServeHealthEndpoint()
 
-	log.Println("Serving API & healthcheck")
+	log.Info().Str("addr", listener.Addr().String()).Msg("serving API")
 	if err := http.Serve(listener, mux); err != nil {
-		log.Fatalln("failed to start server:", err)
+		log.Error().Err(err).Msg("failed to start server")
 	}
 }

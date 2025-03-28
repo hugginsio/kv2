@@ -3,13 +3,18 @@
 > [!WARNING]
 > `kv2` is still v0. Breaking changes are expected.
 
-`kv2` is a versioned, encrypted, key-value secrets manager for the homelab. This module provides the server and client components, as well as the reference CLI implementation. The `kv2` server is:
+`kv2` is a key-value key vault built for homelab secrets management. This repository contains the server and client components, as well as the reference CLI implementation.
 
-- **Simple**: available as a single binary or Docker container. The only interface is a REST API.
-- **Lightweight**: the simplicity of the service allows it to run almost anywhere, such as free tier VMs on hyperscale providers.
-- **Secure**: secrets are encrypted at rest, and the server is designed to integrate with [Tailscale][0] for controlling API access.
+## ✨ Features
 
-While these traits make `kv2` perfect for my homelab, it may not be suitable for production environments.
+- **Simple**: built as a single binary or Docker container, with only a REST API for management.
+- **Encrypted**: secrets are encrypted at rest using [age][1] and user-controlled keys.
+- **Versioned**: up to nine versions of each secret are stored to provide basic change history.
+- **Secure**: built with the [Tailscale][0] client library to provide secure access to the API.
+- **External KMS**: optionally integrates with cloud key management systems for securely retrieving [age][1] keys.
+- **Cloud Storage**: optionally leverage cloud storage system for backup and recovery of the secrets database.
+
+These features makes `kv2` the perfect secrets management solution for my homelab, but it may not be suitable for production environments.
 
 ## 🚀 Quickstart
 
@@ -36,4 +41,5 @@ Additional documentation can be found in the [docs](docs) directory.
 
 <!-- Links -->
 [0]: https://tailscale.com/
+[1]: https://github.com/FiloSottile/age
 [9]: https://github.com/tailscale/setec

@@ -4,11 +4,11 @@
 package main
 
 import (
-	"log"
 	"os"
 	"path"
 
 	"git.huggins.io/kv2/internal/kms"
+	"github.com/rs/zerolog/log"
 )
 
 type Configuration struct {
@@ -37,33 +37,29 @@ func RetrieveConfiguration() Configuration {
 // Check for misconfigurations, print warnings, etc.
 func preflight(configuration Configuration) Configuration {
 	if configuration.DevMode {
-		log.Println("")
-		log.Println("<!> RUNNING IN DEVELOPMENT MODE         <!>")
-		log.Println("<!> An in-memory database will be used. <!>")
-		log.Println("<!> Tailscale will not be used.         <!>")
-		log.Println("")
+		log.Warn().Msg("RUNNING IN DEVELOPMENT MODE")
 	}
 
 	if !configuration.DevMode && configuration.TsAuthKey == "" {
-		log.Fatalln("KV2_TS_AUTHKEY is required outside of development mode.")
+		log.Fatal().Msg("KV2_TS_AUTHKEY is required outside of development mode")
 	} else {
 		configuration.TsAuthKey = kms.KmsMiddleware(configuration.TsAuthKey)
 	}
 
 	if !configuration.DevMode && configuration.PrivateKey == "" {
-		log.Fatalln("KV2_PRIVATE_KEY is required.")
+		log.Fatal().Msg("KV2_PRIVATE_KEY is required")
 	} else {
 		configuration.PrivateKey = kms.KmsMiddleware(configuration.PrivateKey)
 	}
 
 	if !configuration.DevMode && configuration.PublicKey == "" {
-		log.Fatalln("KV2_PUBLIC_KEY is required.")
+		log.Fatal().Msg("KV2_PUBLIC_KEY is required")
 	} else {
 		configuration.PublicKey = kms.KmsMiddleware(configuration.PublicKey)
 	}
 
 	if value, err := os.UserConfigDir(); err != nil {
-		log.Fatalf("Failed to get user config dir: %v", err)
+		log.Fatal().Err(err).Msg("failed to get user config dir")
 	} else {
 		configuration.ConfigurationDir = path.Join(value, "kv2")
 	}

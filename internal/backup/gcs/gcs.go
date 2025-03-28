@@ -5,13 +5,12 @@ package gcs
 
 import (
 	"context"
-	"fmt"
 	"io"
-	"log"
 	"os"
 	"time"
 
 	"cloud.google.com/go/storage"
+	"github.com/rs/zerolog/log"
 	"google.golang.org/api/iterator"
 )
 
@@ -33,14 +32,14 @@ func (gcs *GoogleCloudStorage) Backup(name string) error {
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		log.Fatalf("Failed to create GCS client: %v", err)
+		return err
 	}
 
 	defer client.Close()
 
 	var fileBytes []byte
 	if bytes, err := os.ReadFile(gcs.config.FilePath); err != nil {
-		return fmt.Errorf("failed to read file: %v", err)
+		return err
 	} else {
 		fileBytes = bytes
 	}
@@ -50,23 +49,23 @@ func (gcs *GoogleCloudStorage) Backup(name string) error {
 
 	writer.ContentType = "application/x-sqlite3"
 	if _, err := writer.Write(fileBytes); err != nil {
-		return fmt.Errorf("failed to write file to GCS: %v", err)
+		return err
 	}
 
 	if err := writer.Close(); err != nil {
-		return fmt.Errorf("failed to close GCS writer: %v", err)
+		return err
 	}
 
 	return nil
 }
 
 func (gcs *GoogleCloudStorage) Restore() error {
-	log.Println("Attempting database restore")
+	log.Debug().Msg("database restore started")
 
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		log.Fatalf("Failed to create GCS client: %v", err)
+		return err
 	}
 
 	defer client.Close()
@@ -85,7 +84,7 @@ func (gcs *GoogleCloudStorage) Restore() error {
 		}
 
 		if err != nil {
-			return fmt.Errorf("error iterating objects: %v", err)
+			return err
 		}
 
 		if mostRecent == nil || attrs.Updated.After(mostRecentTime) {
@@ -95,26 +94,25 @@ func (gcs *GoogleCloudStorage) Restore() error {
 	}
 
 	if mostRecent == nil {
-		return fmt.Errorf("no kv2.db files found in bucket")
+		return err
 	}
 
 	reader, err := client.Bucket(gcs.config.BucketName).Object(mostRecent.Name).NewReader(ctx)
 	if err != nil {
-		return fmt.Errorf("failed to create GCS reader: %v", err)
+		return err
 	}
 
 	defer reader.Close()
 
 	fileBytes, err := io.ReadAll(reader)
 	if err != nil {
-		return fmt.Errorf("failed to read file from GCS: %v", err)
+		return err
 	}
 
 	if err := os.WriteFile(gcs.config.FilePath, fileBytes, 0644); err != nil {
-		return fmt.Errorf("failed to write file to disk: %v", err)
+		return err
 	}
 
-	log.Println("Database restored successfully")
-
+	log.Debug().Msg("database restore completed")
 	return nil
 }
