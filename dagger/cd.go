@@ -16,7 +16,7 @@ func (m *Kv2) buildServer(
 	return m.devEnv(ctx, source, nil).
 		WithWorkdir("cmd/server").
 		WithEnvVariable("CGO_ENABLED", "0").
-		WithExec([]string{"go", "build", "-o", "/app/server", "."}).
+		WithExec([]string{"go", "build", "-ldflags", "-s -w", "-gcflags=all=-l -C", "-o", "/app/server", "."}).
 		File("/app/server")
 }
 
