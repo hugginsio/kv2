@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.0](https://github.com/hugginsio/kv2/compare/v0.7.0...v0.8.0) (2025-03-29)
+
+
+### Features
+
+* reduce image size ([#32](https://github.com/hugginsio/kv2/issues/32)) ([f06affa](https://github.com/hugginsio/kv2/commit/f06affa48ff4afddc6a761f1d63cae59ab79e001))
+* update log behavior ([#30](https://github.com/hugginsio/kv2/issues/30)) ([b8bcc94](https://github.com/hugginsio/kv2/commit/b8bcc94467cfccc2d9643b8d782c732c80a79016))
+
 ## [0.7.0](https://github.com/hugginsio/kv2/compare/v0.6.0...v0.7.0) (2025-03-27)
 
 
