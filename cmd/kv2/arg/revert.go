@@ -6,14 +6,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Print version information",
+var revertCmd = &cobra.Command{
+	Use:   "revert",
+	Short: "Revert a secret to a previous version",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("todo")
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(revertCmd)
 }

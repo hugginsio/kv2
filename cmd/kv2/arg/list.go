@@ -6,14 +6,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Print version information",
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List available secrets and versions",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("todo")
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(listCmd)
 }

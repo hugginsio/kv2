@@ -6,14 +6,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var versionCmd = &cobra.Command{
-	Use:   "version",
-	Short: "Print version information",
+var deleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete a secret and all its versions",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("todo")
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(deleteCmd)
 }
