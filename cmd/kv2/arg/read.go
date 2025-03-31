@@ -1,7 +1,8 @@
 package arg
 
 import (
-	"fmt"
+	"encoding/json"
+	"os"
 
 	"git.huggins.io/kv2/api"
 	"github.com/spf13/cobra"
@@ -17,7 +18,7 @@ var readCmd = &cobra.Command{
 			panic(err)
 		}
 
-		fmt.Println(res)
+		json.NewEncoder(os.Stdout).Encode(res)
 	},
 }
 
