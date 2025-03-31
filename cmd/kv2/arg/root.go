@@ -3,14 +3,19 @@ package arg
 import (
 	"os"
 
+	"git.huggins.io/kv2/client"
 	"github.com/spf13/cobra"
 )
 
+var kv2 *client.Client
 var output string
 var jsonOutput bool
 var rootCmd = &cobra.Command{
 	Use:   "kv2",
 	Short: "kv2 provides an interface for your secrets manager",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		kv2 = client.NewClient("http://kv2")
+	},
 }
 
 func Execute() {

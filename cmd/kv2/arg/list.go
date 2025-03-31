@@ -10,7 +10,12 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List available secrets and versions",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("todo")
+		res, err := kv2.List()
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println(res)
 	},
 }
 
