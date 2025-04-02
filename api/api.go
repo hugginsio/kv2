@@ -22,6 +22,10 @@ type Secret struct {
 	Version SecretVersion
 }
 
+type ErrorResponse struct {
+	Message string
+}
+
 type ListSecretResponse struct {
 	Key      string
 	Versions []SecretVersion

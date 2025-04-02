@@ -6,6 +6,7 @@ import (
 	"os"
 	"text/tabwriter"
 
+	"git.huggins.io/kv2/api"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +16,13 @@ var listCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		res, err := kv2.List()
 		if err != nil {
-			panic(err)
+			if jsonOutput {
+				json.NewEncoder(os.Stdout).Encode(api.ErrorResponse{Message: err.Error()})
+			} else {
+				fmt.Println(err)
+			}
+
+			os.Exit(1)
 		}
 
 		if jsonOutput {
