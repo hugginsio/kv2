@@ -1,16 +1,25 @@
+// Copyright 2025 Kyle Huggins
+// SPDX-License-Identifier: BSD-3-Clause
+
 package arg
 
 import (
-	"fmt"
+	"os"
 
+	"git.huggins.io/kv2/api"
+	"git.huggins.io/kv2/internal/cli"
 	"github.com/spf13/cobra"
 )
 
 var revertCmd = &cobra.Command{
-	Use:   "revert",
+	Use:   "revert <key>",
 	Short: "Revert a secret to a previous version",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("todo")
+		if err := kv2.Revert(api.RevertSecretRequest{Key: args[0]}); err != nil {
+			cli.PrintErrorOutput(jsonOutput, err)
+			os.Exit(1)
+		}
 	},
 }
 

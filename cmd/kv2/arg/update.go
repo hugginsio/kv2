@@ -1,19 +1,52 @@
+// Copyright 2025 Kyle Huggins
+// SPDX-License-Identifier: BSD-3-Clause
+
 package arg
 
 import (
-	"fmt"
+	"os"
 
+	"git.huggins.io/kv2/api"
+	"git.huggins.io/kv2/internal/cli"
 	"github.com/spf13/cobra"
 )
 
 var updateCmd = &cobra.Command{
-	Use:   "update",
+	Use:   "update <key>",
 	Short: "Update a secret to a new version",
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("todo")
+		req := api.UpdateSecretRequest{
+			Key: args[0],
+		}
+
+		if val, _ := cmd.Flags().GetString("from-literal"); val != "" {
+			req.Value = []byte(val)
+		}
+
+		if val, _ := cmd.Flags().GetString("from-file"); val != "" {
+			bytes, err := os.ReadFile(val)
+			if err != nil {
+				cli.PrintErrorOutput(jsonOutput, err)
+				os.Exit(1)
+			}
+
+			req.Value = bytes
+		}
+
+		if err := kv2.Update(req); err != nil {
+			cli.PrintErrorOutput(jsonOutput, err)
+			os.Exit(1)
+		}
 	},
 }
 
 func init() {
+	createCmd.Flags().String("from-literal", "", "create secret from literal value")
+	createCmd.Flags().String("from-file", "", "create secret from file")
+
+	createCmd.MarkFlagsMutuallyExclusive("from-literal", "from-file")
+	createCmd.MarkFlagsOneRequired("from-literal", "from-file")
+
 	rootCmd.AddCommand(updateCmd)
 }
