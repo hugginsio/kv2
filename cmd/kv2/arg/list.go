@@ -1,12 +1,14 @@
+// Copyright 2025 Kyle Huggins
+// SPDX-License-Identifier: BSD-3-Clause
+
 package arg
 
 import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"text/tabwriter"
 
-	"git.huggins.io/kv2/api"
+	"git.huggins.io/kv2/internal/cli"
 	"github.com/spf13/cobra"
 )
 
@@ -16,12 +18,7 @@ var listCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		res, err := kv2.List()
 		if err != nil {
-			if jsonOutput {
-				json.NewEncoder(os.Stdout).Encode(api.ErrorResponse{Message: err.Error()})
-			} else {
-				fmt.Println(err)
-			}
-
+			cli.PrintErrorOutput(jsonOutput, err)
 			os.Exit(1)
 		}
 
@@ -30,21 +27,13 @@ var listCmd = &cobra.Command{
 			return
 		}
 
-		data := [][]string{
-			{"KEY", "VERSION"},
-		}
+		var data [][]string
 
 		for _, s := range res {
 			data = append(data, []string{s.Key, fmt.Sprintf("%d", len(s.Versions))})
 		}
 
-		w := tabwriter.NewWriter(os.Stdout, 0, 4, 4, ' ', 0)
-
-		for _, row := range data {
-			fmt.Fprintln(w, row[0]+"\t"+row[1])
-		}
-
-		w.Flush()
+		cli.PrintTable([]string{"KEY", "VERSION"}, data)
 	},
 }
 
