@@ -42,11 +42,11 @@ var updateCmd = &cobra.Command{
 }
 
 func init() {
-	createCmd.Flags().String("from-literal", "", "create secret from literal value")
-	createCmd.Flags().String("from-file", "", "create secret from file")
+	updateCmd.Flags().String("from-literal", "", "create secret from literal value")
+	updateCmd.Flags().String("from-file", "", "create secret from file")
 
-	createCmd.MarkFlagsMutuallyExclusive("from-literal", "from-file")
-	createCmd.MarkFlagsOneRequired("from-literal", "from-file")
+	updateCmd.MarkFlagsMutuallyExclusive("from-literal", "from-file")
+	updateCmd.MarkFlagsOneRequired("from-literal", "from-file")
 
 	rootCmd.AddCommand(updateCmd)
 }
