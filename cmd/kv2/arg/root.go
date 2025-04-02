@@ -1,3 +1,6 @@
+// Copyright 2025 Kyle Huggins
+// SPDX-License-Identifier: BSD-3-Clause
+
 package arg
 
 import (
