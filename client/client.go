@@ -34,7 +34,7 @@ func parseResponse[RESP any](res *http.Response) (RESP, error) {
 }
 
 // TODO: this is not good
-func post[REQ any, RESP any](url string, body REQ, expectResponse bool) (RESP, error) {
+func post[REQ any, RESP any](url string, body REQ) (RESP, error) {
 	var result RESP
 
 	request, err := json.Marshal(body)
@@ -49,11 +49,20 @@ func post[REQ any, RESP any](url string, body REQ, expectResponse bool) (RESP, e
 
 	defer res.Body.Close()
 
-	if expectResponse {
-		return parseResponse[RESP](res)
+	return parseResponse[RESP](res)
+}
+
+func postNoResponse[REQ any](url string, body REQ) error {
+	request, err := json.Marshal(body)
+	if err != nil {
+		return fmt.Errorf("request parsing failed: %w", err)
 	}
 
-	return result, nil
+	if _, err := http.Post(url, "application/json", bytes.NewReader(request)); err != nil {
+		return fmt.Errorf("request failed: %w", err)
+	}
+
+	return nil
 }
 
 func get[RESP any](url string) (RESP, error) {
@@ -71,7 +80,7 @@ func get[RESP any](url string) (RESP, error) {
 func (c *Client) Backup(request api.BackupRequest) error {
 	url := fmt.Sprintf("%s/secrets/backup", c.server)
 
-	if _, err := post[api.BackupRequest, struct{}](url, request, false); err != nil {
+	if err := postNoResponse(url, request); err != nil {
 		return fmt.Errorf("failed to trigger backup: %w", err)
 	}
 
@@ -81,7 +90,7 @@ func (c *Client) Backup(request api.BackupRequest) error {
 func (c *Client) Create(request api.CreateSecretRequest) error {
 	url := fmt.Sprintf("%s/secrets/create", c.server)
 
-	if _, err := post[api.CreateSecretRequest, struct{}](url, request, false); err != nil {
+	if err := postNoResponse[api.CreateSecretRequest](url, request); err != nil {
 		return fmt.Errorf("failed to create secret: %w", err)
 	}
 
@@ -91,7 +100,7 @@ func (c *Client) Create(request api.CreateSecretRequest) error {
 func (c *Client) Delete(request api.DeleteSecretRequest) error {
 	url := fmt.Sprintf("%s/secrets/delete", c.server)
 
-	if _, err := post[api.DeleteSecretRequest, struct{}](url, request, false); err != nil {
+	if err := postNoResponse(url, request); err != nil {
 		return fmt.Errorf("failed to delete secret: %w", err)
 	}
 
@@ -114,7 +123,7 @@ func (c *Client) Read(request api.ReadSecretRequest) (api.Secret, error) {
 	var secret api.Secret
 	url := fmt.Sprintf("%s/secrets/read", c.server)
 
-	secret, err := post[api.ReadSecretRequest, api.Secret](url, request, true)
+	secret, err := post[api.ReadSecretRequest, api.Secret](url, request)
 	if err != nil {
 		return secret, fmt.Errorf("failed to read secret: %w", err)
 	}
@@ -125,7 +134,7 @@ func (c *Client) Read(request api.ReadSecretRequest) (api.Secret, error) {
 func (c *Client) Revert(request api.RevertSecretRequest) error {
 	url := fmt.Sprintf("%s/secrets/revert", c.server)
 
-	if _, err := post[api.RevertSecretRequest, struct{}](url, request, false); err != nil {
+	if err := postNoResponse(url, request); err != nil {
 		return fmt.Errorf("failed to revert secret: %w", err)
 	}
 
@@ -135,7 +144,7 @@ func (c *Client) Revert(request api.RevertSecretRequest) error {
 func (c *Client) Update(request api.UpdateSecretRequest) error {
 	url := fmt.Sprintf("%s/secrets/update", c.server)
 
-	if _, err := post[api.UpdateSecretRequest, struct{}](url, request, false); err != nil {
+	if err := postNoResponse(url, request); err != nil {
 		return fmt.Errorf("failed to update secret: %w", err)
 	}
 

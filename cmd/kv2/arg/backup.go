@@ -1,6 +1,10 @@
 package arg
 
 import (
+	"os"
+
+	"git.huggins.io/kv2/api"
+	"git.huggins.io/kv2/internal/cli"
 	"github.com/spf13/cobra"
 )
 
@@ -8,7 +12,10 @@ var backupCmd = &cobra.Command{
 	Use:   "backup",
 	Short: "Backup the secrets database",
 	Run: func(cmd *cobra.Command, args []string) {
-		panic("not implemented")
+		if err := kv2.Backup(api.BackupRequest{Name: "kv2.db"}); err != nil {
+			cli.PrintErrorOutput(jsonOutput, err)
+			os.Exit(1)
+		}
 	},
 }
 

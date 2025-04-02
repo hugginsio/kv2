@@ -53,8 +53,6 @@ func (hs *HttpServer) list(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/plain")
-
 	secrets, err := hs.database.List()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -72,8 +70,6 @@ func (hs *HttpServer) create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusMethodNotAllowed)
 		return
 	}
-
-	w.Header().Set("Content-Type", "text/plain")
 
 	var request api.CreateSecretRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -94,7 +90,6 @@ func (hs *HttpServer) create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Del("Content-Type")
 	w.WriteHeader(http.StatusCreated)
 }
 
@@ -104,8 +99,6 @@ func (hs *HttpServer) read(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusMethodNotAllowed)
 		return
 	}
-
-	w.Header().Set("Content-Type", "text/plain")
 
 	var request api.ReadSecretRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -139,8 +132,6 @@ func (hs *HttpServer) update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/plain")
-
 	var request api.UpdateSecretRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -152,7 +143,6 @@ func (hs *HttpServer) update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Del("Content-Type")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -162,8 +152,6 @@ func (hs *HttpServer) delete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusMethodNotAllowed)
 		return
 	}
-
-	w.Header().Set("Content-Type", "text/plain")
 
 	var request api.DeleteSecretRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -176,7 +164,6 @@ func (hs *HttpServer) delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Del("Content-Type")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -186,8 +173,6 @@ func (hs *HttpServer) revert(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusMethodNotAllowed)
 		return
 	}
-
-	w.Header().Set("Content-Type", "text/plain")
 
 	var request api.RevertSecretRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -200,7 +185,6 @@ func (hs *HttpServer) revert(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Del("Content-Type")
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -211,10 +195,8 @@ func (hs *HttpServer) createBackup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/plain")
-
 	var request api.BackupRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != io.EOF {
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil && err != io.EOF {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -229,6 +211,5 @@ func (hs *HttpServer) createBackup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Del("Content-Type")
 	w.WriteHeader(http.StatusCreated)
 }
