@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/hugginsio/kv2/compare/v0.8.0...v0.9.0) (2025-04-04)
+
+
+### Features
+
+* create FUNDING.yaml ([#33](https://github.com/hugginsio/kv2/issues/33)) ([ecac217](https://github.com/hugginsio/kv2/commit/ecac21702bd5dded43c3cab7cda91cdfdaeff428))
+
 ## [0.8.0](https://github.com/hugginsio/kv2/compare/v0.7.0...v0.8.0) (2025-03-29)
 
 
