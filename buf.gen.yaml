@@ -1,0 +1,18 @@
+# https://buf.build/docs/configuration/v2/buf-gen-yaml/
+# yaml-language-server: $schema=https://json.schemastore.org/buf.gen.json
+
+version: v2
+managed:
+  enabled: true
+  override:
+    - file_option: go_package_prefix
+      value: git.huggins.io/kv2/api
+plugins:
+  - remote: buf.build/protocolbuffers/go
+    out: api
+    opt: paths=source_relative
+  - remote: buf.build/connectrpc/go
+    out: api
+    opt: paths=source_relative
+inputs:
+  - directory: proto
