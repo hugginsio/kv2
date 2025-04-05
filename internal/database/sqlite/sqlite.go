@@ -152,7 +152,7 @@ func (db *SqliteDatabase) Update(request *secretsv1.UpdateSecretRequest) (*secre
 			return err
 		}
 
-		if len(allValues) < 9 {
+		if len(allValues) <= 9 {
 			return nil
 		}
 
