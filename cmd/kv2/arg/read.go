@@ -4,13 +4,9 @@
 package arg
 
 import (
-	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"os"
 
-	"git.huggins.io/kv2/api"
-	"git.huggins.io/kv2/internal/cli"
 	"github.com/spf13/cobra"
 )
 
@@ -26,23 +22,7 @@ var readCmd = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		res, err := kv2.Read(api.ReadSecretRequest{Key: args[0]})
-		if err != nil {
-			cli.PrintErrorOutput(jsonOutput, err)
-			os.Exit(1)
-		}
-
-		if jsonOutput {
-			json.NewEncoder(os.Stdout).Encode(res)
-			return
-		}
-
-		if cmd.Flag("decode").Value.String() == "true" {
-			fmt.Println(string(res.Value))
-			return
-		}
-
-		fmt.Println(base64.StdEncoding.EncodeToString(res.Value))
+		os.Exit(1)
 	},
 }
 

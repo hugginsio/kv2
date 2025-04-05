@@ -6,8 +6,6 @@ package arg
 import (
 	"os"
 
-	"git.huggins.io/kv2/api"
-	"git.huggins.io/kv2/internal/cli"
 	"github.com/spf13/cobra"
 )
 
@@ -16,28 +14,7 @@ var createCmd = &cobra.Command{
 	Short: "Create a new secret",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		req := api.CreateSecretRequest{
-			Key: args[0],
-		}
-
-		if val, _ := cmd.Flags().GetString("from-literal"); val != "" {
-			req.Value = []byte(val)
-		}
-
-		if val, _ := cmd.Flags().GetString("from-file"); val != "" {
-			bytes, err := os.ReadFile(val)
-			if err != nil {
-				cli.PrintErrorOutput(jsonOutput, err)
-				os.Exit(1)
-			}
-
-			req.Value = bytes
-		}
-
-		if err := kv2.Create(req); err != nil {
-			cli.PrintErrorOutput(jsonOutput, err)
-			os.Exit(1)
-		}
+		os.Exit(1)
 	},
 }
 
