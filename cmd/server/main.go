@@ -86,7 +86,7 @@ func main() {
 	var listener net.Listener
 
 	if appConfig.DevMode {
-		ln, err := net.Listen("tcp", ":8080")
+		ln, err := net.Listen("tcp", ":8081")
 		if err != nil {
 			log.Fatal().Err(err).Str("addr", ln.Addr().String()).Msg("failed to listen")
 		}
@@ -96,7 +96,7 @@ func main() {
 		listener = Tsnet(appConfig)
 	}
 
-	// go ServeHealthEndpoint()
+	go ServeHealthEndpoint()
 
 	log.Info().Str("addr", listener.Addr().String()).Msg("serving API")
 	if err := http.Serve(listener, h2c.NewHandler(mux, &http2.Server{})); err != nil {
