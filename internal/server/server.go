@@ -43,29 +43,69 @@ func Initialize(config Configuration) *HttpServer {
 }
 
 func (h *HttpServer) CreateSecret(ctx context.Context, req *connect.Request[secretsv1.CreateSecretRequest]) (*connect.Response[secretsv1.CreateSecretResponse], error) {
-	return &connect.Response[secretsv1.CreateSecretResponse]{Msg: &secretsv1.CreateSecretResponse{Secret: &secretsv1.SecretMetadata{Key: "key", Version: []uint32{1}}}}, nil
+	if err := h.database.Create(req.Msg); err != nil {
+		// TODO: error handling?
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	res := &secretsv1.CreateSecretResponse{
+		Secret: &secretsv1.SecretMetadata{Key: req.Msg.Key, Version: []uint32{1}},
+	}
+
+	return &connect.Response[secretsv1.CreateSecretResponse]{Msg: res}, nil
 }
 
 func (h *HttpServer) GetSecret(ctx context.Context, req *connect.Request[secretsv1.GetSecretRequest]) (*connect.Response[secretsv1.GetSecretResponse], error) {
-	return nil, nil
+	res, err := h.database.Read(req.Msg)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	return &connect.Response[secretsv1.GetSecretResponse]{Msg: res}, nil
 }
 
 func (h *HttpServer) UpdateSecret(ctx context.Context, req *connect.Request[secretsv1.UpdateSecretRequest]) (*connect.Response[secretsv1.UpdateSecretResponse], error) {
-	return nil, nil
+	if res, err := h.database.Update(req.Msg); err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	} else {
+		return &connect.Response[secretsv1.UpdateSecretResponse]{Msg: res}, nil
+	}
 }
 
 func (h *HttpServer) DeleteSecret(ctx context.Context, req *connect.Request[secretsv1.DeleteSecretRequest]) (*connect.Response[secretsv1.DeleteSecretResponse], error) {
-	return nil, nil
+	if err := h.database.Delete(req.Msg); err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	return &connect.Response[secretsv1.DeleteSecretResponse]{Msg: &secretsv1.DeleteSecretResponse{}}, nil
 }
 
 func (h *HttpServer) RevertSecret(ctx context.Context, req *connect.Request[secretsv1.RevertSecretRequest]) (*connect.Response[secretsv1.RevertSecretResponse], error) {
-	return nil, nil
+	if res, err := h.database.Revert(req.Msg); err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	} else {
+		return &connect.Response[secretsv1.RevertSecretResponse]{Msg: res}, nil
+	}
 }
 
 func (h *HttpServer) ListSecrets(ctx context.Context, req *connect.Request[secretsv1.ListSecretsRequest]) (*connect.Response[secretsv1.ListSecretsResponse], error) {
-	return nil, nil
+	res, err := h.database.List()
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	return &connect.Response[secretsv1.ListSecretsResponse]{Msg: res}, nil
 }
 
 func (h *HttpServer) Backup(ctx context.Context, req *connect.Request[secretsv1.BackupRequest]) (*connect.Response[secretsv1.BackupResponse], error) {
-	return nil, nil
+	backupName := req.Msg.GetName()
+	if backupName == "" {
+		backupName = "kv2.db"
+	}
+
+	if err := h.backup.Backup(backupName); err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	return &connect.Response[secretsv1.BackupResponse]{Msg: &secretsv1.BackupResponse{}}, nil
 }

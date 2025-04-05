@@ -124,15 +124,15 @@ func (db *SqliteDatabase) Read(request *secretsv1.GetSecretRequest) (*secretsv1.
 }
 
 // Create a new version of an existing secret.
-func (db *SqliteDatabase) Update(request *secretsv1.UpdateSecretRequest) error {
+func (db *SqliteDatabase) Update(request *secretsv1.UpdateSecretRequest) (*secretsv1.UpdateSecretResponse, error) {
 	var secretRecord database.SecretRecord
 
 	if err := db.sql.First(&secretRecord, "key = ?", request.Key).Error; err != nil {
-		return err
+		return nil, err
 	}
 
-	return db.sql.Transaction(func(tx *gorm.DB) error {
-		var latestValue database.ValueRecord
+	var latestValue database.ValueRecord
+	if err := db.sql.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Where("secret_record_id = ?", secretRecord.ID).Order("version DESC").Limit(1).Find(&latestValue).Error; err != nil {
 			return err
 		}
@@ -161,7 +161,11 @@ func (db *SqliteDatabase) Update(request *secretsv1.UpdateSecretRequest) error {
 		}
 
 		return nil
-	})
+	}); err != nil {
+		return nil, err
+	}
+
+	return &secretsv1.UpdateSecretResponse{Version: latestValue.Version + 1}, nil
 }
 
 // Delete a secret and all its versions.
@@ -190,14 +194,14 @@ func (db *SqliteDatabase) Delete(request *secretsv1.DeleteSecretRequest) error {
 }
 
 // Revert a secret to a previous version.
-func (db *SqliteDatabase) Revert(request *secretsv1.RevertSecretRequest) error {
+func (db *SqliteDatabase) Revert(request *secretsv1.RevertSecretRequest) (*secretsv1.RevertSecretResponse, error) {
 	var secretRecord database.SecretRecord
 	if err := db.sql.Where("key = ?", request.Key).First(&secretRecord).Error; err != nil {
-		return err
+		return nil, err
 	}
 
-	return db.sql.Transaction(func(tx *gorm.DB) error {
-		var allValues []database.ValueRecord
+	var allValues []database.ValueRecord
+	if err := db.sql.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Where("secret_record_id = ?", secretRecord.ID).Order("version DESC").Limit(2).Find(&allValues).Error; err != nil {
 			return err
 		}
@@ -211,5 +215,9 @@ func (db *SqliteDatabase) Revert(request *secretsv1.RevertSecretRequest) error {
 		}
 
 		return nil
-	})
+	}); err != nil {
+		return nil, err
+	}
+
+	return &secretsv1.RevertSecretResponse{Version: allValues[1].Version}, nil
 }

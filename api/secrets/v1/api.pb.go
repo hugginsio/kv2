@@ -663,7 +663,7 @@ func (x *ListSecretsResponse) GetSecrets() []*SecretMetadata {
 
 type BackupRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Name          *string                `protobuf:"bytes,1,opt,name=name,proto3,oneof" json:"name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -699,15 +699,14 @@ func (*BackupRequest) Descriptor() ([]byte, []int) {
 }
 
 func (x *BackupRequest) GetName() string {
-	if x != nil {
-		return x.Name
+	if x != nil && x.Name != nil {
+		return *x.Name
 	}
 	return ""
 }
 
 type BackupResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -740,13 +739,6 @@ func (x *BackupResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use BackupResponse.ProtoReflect.Descriptor instead.
 func (*BackupResponse) Descriptor() ([]byte, []int) {
 	return file_secrets_v1_api_proto_rawDescGZIP(), []int{15}
-}
-
-func (x *BackupResponse) GetSuccess() bool {
-	if x != nil {
-		return x.Success
-	}
-	return false
 }
 
 var File_secrets_v1_api_proto protoreflect.FileDescriptor
@@ -787,11 +779,11 @@ const file_secrets_v1_api_proto_rawDesc = "" +
 	"\aversion\x18\x01 \x01(\rR\aversion\"\x14\n" +
 	"\x12ListSecretsRequest\"K\n" +
 	"\x13ListSecretsResponse\x124\n" +
-	"\asecrets\x18\x01 \x03(\v2\x1a.secrets.v1.SecretMetadataR\asecrets\"#\n" +
-	"\rBackupRequest\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\"*\n" +
-	"\x0eBackupResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess2\xb3\x04\n" +
+	"\asecrets\x18\x01 \x03(\v2\x1a.secrets.v1.SecretMetadataR\asecrets\"1\n" +
+	"\rBackupRequest\x12\x17\n" +
+	"\x04name\x18\x01 \x01(\tH\x00R\x04name\x88\x01\x01B\a\n" +
+	"\x05_name\"\x10\n" +
+	"\x0eBackupResponse2\xb3\x04\n" +
 	"\n" +
 	"Kv2Service\x12Q\n" +
 	"\fCreateSecret\x12\x1f.secrets.v1.CreateSecretRequest\x1a .secrets.v1.CreateSecretResponse\x12H\n" +
@@ -867,6 +859,7 @@ func file_secrets_v1_api_proto_init() {
 		return
 	}
 	file_secrets_v1_api_proto_msgTypes[0].OneofWrappers = []any{}
+	file_secrets_v1_api_proto_msgTypes[14].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
