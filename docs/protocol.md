@@ -277,13 +277,13 @@ The Kv2 service provides an encrypted key-value store with versioning and backup
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| CreateSecret | [CreateSecretRequest](#secrets-v1-CreateSecretRequest) | [CreateSecretResponse](#secrets-v1-CreateSecretResponse) |  |
-| GetSecret | [GetSecretRequest](#secrets-v1-GetSecretRequest) | [GetSecretResponse](#secrets-v1-GetSecretResponse) |  |
-| UpdateSecret | [UpdateSecretRequest](#secrets-v1-UpdateSecretRequest) | [UpdateSecretResponse](#secrets-v1-UpdateSecretResponse) |  |
-| DeleteSecret | [DeleteSecretRequest](#secrets-v1-DeleteSecretRequest) | [DeleteSecretResponse](#secrets-v1-DeleteSecretResponse) |  |
-| RevertSecret | [RevertSecretRequest](#secrets-v1-RevertSecretRequest) | [RevertSecretResponse](#secrets-v1-RevertSecretResponse) |  |
-| ListSecrets | [ListSecretsRequest](#secrets-v1-ListSecretsRequest) | [ListSecretsResponse](#secrets-v1-ListSecretsResponse) |  |
-| Backup | [BackupRequest](#secrets-v1-BackupRequest) | [BackupResponse](#secrets-v1-BackupResponse) |  |
+| CreateSecret | [CreateSecretRequest](#secrets-v1-CreateSecretRequest) | [CreateSecretResponse](#secrets-v1-CreateSecretResponse) | Create a new secret. |
+| GetSecret | [GetSecretRequest](#secrets-v1-GetSecretRequest) | [GetSecretResponse](#secrets-v1-GetSecretResponse) | Retrieve a secret. |
+| UpdateSecret | [UpdateSecretRequest](#secrets-v1-UpdateSecretRequest) | [UpdateSecretResponse](#secrets-v1-UpdateSecretResponse) | Update an existing secret. |
+| DeleteSecret | [DeleteSecretRequest](#secrets-v1-DeleteSecretRequest) | [DeleteSecretResponse](#secrets-v1-DeleteSecretResponse) | Delete a secret. |
+| RevertSecret | [RevertSecretRequest](#secrets-v1-RevertSecretRequest) | [RevertSecretResponse](#secrets-v1-RevertSecretResponse) | Revert a secret to a previous version. |
+| ListSecrets | [ListSecretsRequest](#secrets-v1-ListSecretsRequest) | [ListSecretsResponse](#secrets-v1-ListSecretsResponse) | List all available secrets. |
+| Backup | [BackupRequest](#secrets-v1-BackupRequest) | [BackupResponse](#secrets-v1-BackupResponse) | Backup the secrets database. |
 
 
 
