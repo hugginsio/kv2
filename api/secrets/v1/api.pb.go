@@ -21,11 +21,12 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Secret represents a single secret version.
 type Secret struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	Value         []byte                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
-	Version       *uint32                `protobuf:"varint,3,opt,name=version,proto3,oneof" json:"version,omitempty"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`          // The plain text key of the secret.
+	Value         []byte                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`      // The encrypted value of the secret.
+	Version       uint32                 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"` // The version of the represented secret.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -75,16 +76,17 @@ func (x *Secret) GetValue() []byte {
 }
 
 func (x *Secret) GetVersion() uint32 {
-	if x != nil && x.Version != nil {
-		return *x.Version
+	if x != nil {
+		return x.Version
 	}
 	return 0
 }
 
+// SecretMetadata represents a secret and all its versions.
 type SecretMetadata struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	Version       []uint32               `protobuf:"varint,2,rep,packed,name=version,proto3" json:"version,omitempty"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`                 // The plain text key of the secret.
+	Version       []uint32               `protobuf:"varint,2,rep,packed,name=version,proto3" json:"version,omitempty"` // All versions of the secret.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -133,10 +135,11 @@ func (x *SecretMetadata) GetVersion() []uint32 {
 	return nil
 }
 
+// Request message for `secrets.v1.Kv2Service/CreateSecret`.
 type CreateSecretRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	Value         []byte                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`     // The plain text key of the secret.
+	Value         []byte                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"` // The encoded value of the secret.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -185,9 +188,10 @@ func (x *CreateSecretRequest) GetValue() []byte {
 	return nil
 }
 
+// Response message for `secrets.v1.Kv2Service/CreateSecret`.
 type CreateSecretResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Secret        *SecretMetadata        `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"`
+	Secret        *SecretMetadata        `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"` // The metadata of the created secret.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -229,9 +233,10 @@ func (x *CreateSecretResponse) GetSecret() *SecretMetadata {
 	return nil
 }
 
+// Request message for `secrets.v1.Kv2Service/GetSecret`.
 type GetSecretRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"` // The plain text key of the secret.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -273,9 +278,10 @@ func (x *GetSecretRequest) GetKey() string {
 	return ""
 }
 
+// Response message for `secrets.v1.Kv2Service/GetSecret`.
 type GetSecretResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Secret        *Secret                `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"`
+	Secret        *Secret                `protobuf:"bytes,1,opt,name=secret,proto3" json:"secret,omitempty"` // The requested secret.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -317,10 +323,11 @@ func (x *GetSecretResponse) GetSecret() *Secret {
 	return nil
 }
 
+// Request message for `secrets.v1.Kv2Service/UpdateSecret`.
 type UpdateSecretRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
-	Value         []byte                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`     // The plain text key of the secret.
+	Value         []byte                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"` // The encoded value of the secret.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -369,9 +376,10 @@ func (x *UpdateSecretRequest) GetValue() []byte {
 	return nil
 }
 
+// Response message for `secrets.v1.Kv2Service/UpdateSecret`.
 type UpdateSecretResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Version       uint32                 `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"`
+	Version       uint32                 `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"` // The version of the updated secret.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -413,9 +421,10 @@ func (x *UpdateSecretResponse) GetVersion() uint32 {
 	return 0
 }
 
+// Request message for `secrets.v1.Kv2Service/DeleteSecret`.
 type DeleteSecretRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"` // The plain text key of the secret.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -457,6 +466,7 @@ func (x *DeleteSecretRequest) GetKey() string {
 	return ""
 }
 
+// Empty message. Check for an error code to determine success.
 type DeleteSecretResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -493,9 +503,10 @@ func (*DeleteSecretResponse) Descriptor() ([]byte, []int) {
 	return file_secrets_v1_api_proto_rawDescGZIP(), []int{9}
 }
 
+// Request message for `secrets.v1.Kv2Service/RevertSecret`.
 type RevertSecretRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"` // The plain text key of the secret.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -537,9 +548,10 @@ func (x *RevertSecretRequest) GetKey() string {
 	return ""
 }
 
+// Request message for `secrets.v1.Kv2Service/RevertSecret`.
 type RevertSecretResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Version       uint32                 `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"`
+	Version       uint32                 `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"` // The current version of the reverted secret.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -581,6 +593,7 @@ func (x *RevertSecretResponse) GetVersion() uint32 {
 	return 0
 }
 
+// Empty message. No request message needed to list secrets.
 type ListSecretsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -617,9 +630,10 @@ func (*ListSecretsRequest) Descriptor() ([]byte, []int) {
 	return file_secrets_v1_api_proto_rawDescGZIP(), []int{12}
 }
 
+// Response message for `secrets.v1.Kv2Service/ListSecrets`.
 type ListSecretsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Secrets       []*SecretMetadata      `protobuf:"bytes,1,rep,name=secrets,proto3" json:"secrets,omitempty"`
+	Secrets       []*SecretMetadata      `protobuf:"bytes,1,rep,name=secrets,proto3" json:"secrets,omitempty"` // The secret metadata for all available secrets.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -661,9 +675,10 @@ func (x *ListSecretsResponse) GetSecrets() []*SecretMetadata {
 	return nil
 }
 
+// Request message for `secrets.v1.Kv2Service/Backup`.
 type BackupRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          *string                `protobuf:"bytes,1,opt,name=name,proto3,oneof" json:"name,omitempty"`
+	Name          *string                `protobuf:"bytes,1,opt,name=name,proto3,oneof" json:"name,omitempty"` // The name of the backup. Defaults to `kv2.db`.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -705,6 +720,7 @@ func (x *BackupRequest) GetName() string {
 	return ""
 }
 
+// Empty message. Check for an error code to determine success.
 type BackupResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -746,13 +762,11 @@ var File_secrets_v1_api_proto protoreflect.FileDescriptor
 const file_secrets_v1_api_proto_rawDesc = "" +
 	"\n" +
 	"\x14secrets/v1/api.proto\x12\n" +
-	"secrets.v1\"[\n" +
+	"secrets.v1\"J\n" +
 	"\x06Secret\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\fR\x05value\x12\x1d\n" +
-	"\aversion\x18\x03 \x01(\rH\x00R\aversion\x88\x01\x01B\n" +
-	"\n" +
-	"\b_version\"<\n" +
+	"\x05value\x18\x02 \x01(\fR\x05value\x12\x18\n" +
+	"\aversion\x18\x03 \x01(\rR\aversion\"<\n" +
 	"\x0eSecretMetadata\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x18\n" +
 	"\aversion\x18\x02 \x03(\rR\aversion\"=\n" +
@@ -858,7 +872,6 @@ func file_secrets_v1_api_proto_init() {
 	if File_secrets_v1_api_proto != nil {
 		return
 	}
-	file_secrets_v1_api_proto_msgTypes[0].OneofWrappers = []any{}
 	file_secrets_v1_api_proto_msgTypes[14].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
