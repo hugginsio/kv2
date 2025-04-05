@@ -18,13 +18,18 @@ func Tsnet(config Configuration) net.Listener {
 		UserLogf:  log.Printf,
 	}
 
-	ln, err := server.Listen("tcp", ":80")
+	_, err := server.Up(context.Background())
 	if err != nil {
-		log.Fatal().Err(err).Str("addr", ln.Addr().String()).Msg("failed to listen")
+		log.Fatal().Err(err).Msg("Tailscale failed to start")
 	}
 
-	if _, err := server.Up(context.Background()); err != nil {
-		log.Fatal().Err(err).Msg("failed to start tsnet")
+	if len(server.CertDomains()) == 0 {
+		log.Fatal().Msg("no TLS domains found in Tailscale")
+	}
+
+	ln, err := server.ListenTLS("tcp", ":443")
+	if err != nil {
+		log.Fatal().Err(err).Str("addr", ln.Addr().String()).Msg("failed to listen")
 	}
 
 	return ln

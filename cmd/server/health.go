@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"git.huggins.io/kv2/api"
+	"git.huggins.io/kv2/internal/o11y"
 	"github.com/rs/zerolog/log"
 )
 
@@ -33,7 +33,7 @@ func (hs *HealthServer) getHealth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res := api.HealthResponse{
+	res := o11y.HealthResponse{
 		Status: "UP",
 	}
 

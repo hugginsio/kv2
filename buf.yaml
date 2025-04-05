@@ -1,0 +1,12 @@
+# https://buf.build/docs/configuration/v2/buf-yaml/
+# yaml-language-server: $schema=https://json.schemastore.org/buf.json
+
+version: v2
+modules:
+  - path: proto
+lint:
+  use:
+    - STANDARD
+breaking:
+  use:
+    - FILE
