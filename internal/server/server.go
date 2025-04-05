@@ -4,11 +4,12 @@
 package server
 
 import (
-	"encoding/json"
-	"io"
+	"context"
 	"net/http"
 
-	"git.huggins.io/kv2/api"
+	"connectrpc.com/connect"
+	secretsv1 "git.huggins.io/kv2/api/secrets/v1"
+	"git.huggins.io/kv2/api/secrets/v1/secretsv1connect"
 	"git.huggins.io/kv2/internal/backup"
 	"git.huggins.io/kv2/internal/crypto"
 	"git.huggins.io/kv2/internal/database"
@@ -35,200 +36,36 @@ func Initialize(config Configuration) *HttpServer {
 		database: *config.Database,
 	}
 
-	config.Mux.HandleFunc("/secrets", server.list)
-	config.Mux.HandleFunc("/secrets/create", server.create)
-	config.Mux.HandleFunc("/secrets/read", server.read)
-	config.Mux.HandleFunc("/secrets/update", server.update)
-	config.Mux.HandleFunc("/secrets/delete", server.delete)
-	config.Mux.HandleFunc("/secrets/revert", server.revert)
-	config.Mux.HandleFunc("/secrets/backup", server.createBackup)
+	path, handler := secretsv1connect.NewKv2ServiceHandler(server)
+	config.Mux.Handle(path, handler)
 
 	return server
 }
 
-// Lists all secrets in the database.
-func (hs *HttpServer) list(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "", http.StatusMethodNotAllowed)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/plain")
-
-	secrets, err := hs.database.List()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(secrets)
+func (h *HttpServer) CreateSecret(ctx context.Context, req *connect.Request[secretsv1.CreateSecretRequest]) (*connect.Response[secretsv1.CreateSecretResponse], error) {
+	return nil, nil
 }
 
-// Create a new secret in the database.
-func (hs *HttpServer) create(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "", http.StatusMethodNotAllowed)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/plain")
-
-	var request api.CreateSecretRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	enc, err := hs.crypto.Encrypt(request.Value)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	request.Value = enc
-
-	if err := hs.database.Create(request); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Del("Content-Type")
-	w.WriteHeader(http.StatusCreated)
+func (h *HttpServer) GetSecret(ctx context.Context, req *connect.Request[secretsv1.GetSecretRequest]) (*connect.Response[secretsv1.GetSecretResponse], error) {
+	return nil, nil
 }
 
-// Retrieve a single secret from the database.
-func (hs *HttpServer) read(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "", http.StatusMethodNotAllowed)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/plain")
-
-	var request api.ReadSecretRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	secret, err := hs.database.Read(request)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	dec, err := hs.crypto.Decrypt(secret.Value)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	secret.Value = dec
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(secret)
+func (h *HttpServer) UpdateSecret(ctx context.Context, req *connect.Request[secretsv1.UpdateSecretRequest]) (*connect.Response[secretsv1.UpdateSecretResponse], error) {
+	return nil, nil
 }
 
-// Update an existing secret with a new version.
-func (hs *HttpServer) update(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "", http.StatusMethodNotAllowed)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/plain")
-
-	var request api.UpdateSecretRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if err := hs.database.Update(request); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Del("Content-Type")
-	w.WriteHeader(http.StatusOK)
+func (h *HttpServer) DeleteSecret(ctx context.Context, req *connect.Request[secretsv1.DeleteSecretRequest]) (*connect.Response[secretsv1.DeleteSecretResponse], error) {
+	return nil, nil
 }
 
-// Delete a secret and all of its versions.
-func (hs *HttpServer) delete(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodDelete {
-		http.Error(w, "", http.StatusMethodNotAllowed)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/plain")
-
-	var request api.DeleteSecretRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if err := hs.database.Delete(request); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Del("Content-Type")
-	w.WriteHeader(http.StatusOK)
+func (h *HttpServer) RevertSecret(ctx context.Context, req *connect.Request[secretsv1.RevertSecretRequest]) (*connect.Response[secretsv1.RevertSecretResponse], error) {
+	return nil, nil
 }
 
-// Revert a secret to the previous version.
-func (hs *HttpServer) revert(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "", http.StatusMethodNotAllowed)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/plain")
-
-	var request api.RevertSecretRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if err := hs.database.Revert(request); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Del("Content-Type")
-	w.WriteHeader(http.StatusOK)
+func (h *HttpServer) ListSecrets(ctx context.Context, req *connect.Request[secretsv1.ListSecretsRequest]) (*connect.Response[secretsv1.ListSecretsResponse], error) {
+	return nil, nil
 }
 
-// Create a backup using the configured provider.
-func (hs *HttpServer) createBackup(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "", http.StatusMethodNotAllowed)
-		return
-	}
-
-	w.Header().Set("Content-Type", "text/plain")
-
-	var request api.BackupRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != io.EOF {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if request.Name == "" {
-		request.Name = "kv2.db"
-		return
-	}
-
-	if err := hs.backup.Backup(request.Name); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Del("Content-Type")
-	w.WriteHeader(http.StatusCreated)
+func (h *HttpServer) Backup(ctx context.Context, req *connect.Request[secretsv1.BackupRequest]) (*connect.Response[secretsv1.BackupResponse], error) {
+	return nil, nil
 }

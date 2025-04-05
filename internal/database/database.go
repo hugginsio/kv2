@@ -3,18 +3,16 @@
 
 package database
 
-import (
-	"git.huggins.io/kv2/api"
-)
+import secretsv1 "git.huggins.io/kv2/api/secrets/v1"
 
 // Database provides methods for interacting with a secrets database.
 type Database interface {
-	List() ([]api.ListSecretResponse, error)
-	Create(api.CreateSecretRequest) error
-	Read(api.ReadSecretRequest) (api.Secret, error)
-	Update(api.UpdateSecretRequest) error
-	Delete(api.DeleteSecretRequest) error
-	Revert(api.RevertSecretRequest) error
+	List() (*secretsv1.ListSecretsResponse, error)
+	Create(*secretsv1.CreateSecretRequest) error
+	Read(*secretsv1.GetSecretRequest) (*secretsv1.GetSecretResponse, error)
+	Update(*secretsv1.UpdateSecretRequest) error
+	Delete(*secretsv1.DeleteSecretRequest) error
+	Revert(*secretsv1.RevertSecretRequest) error
 }
 
 type Configuration struct {
@@ -30,5 +28,5 @@ type ValueRecord struct {
 	ID             uint
 	SecretRecordID uint
 	Value          []byte
-	Version        api.SecretVersion
+	Version        uint32
 }

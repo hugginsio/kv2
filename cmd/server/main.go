@@ -94,7 +94,7 @@ func main() {
 		listener = Tsnet(appConfig)
 	}
 
-	go ServeHealthEndpoint()
+	// go ServeHealthEndpoint()
 
 	log.Info().Str("addr", listener.Addr().String()).Msg("serving API")
 	if err := http.Serve(listener, mux); err != nil {

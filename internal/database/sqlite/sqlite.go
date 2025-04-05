@@ -4,7 +4,9 @@
 package sqlite
 
 import (
-	"git.huggins.io/kv2/api"
+	"errors"
+
+	secretsv1 "git.huggins.io/kv2/api/secrets/v1"
 	"git.huggins.io/kv2/internal/database"
 	"github.com/glebarez/sqlite"
 	"github.com/rs/zerolog/log"
@@ -36,8 +38,8 @@ func Initialize(configuration Configuration) (*SqliteDatabase, error) {
 }
 
 // List all secrets and their versions.
-func (db *SqliteDatabase) List() ([]api.ListSecretResponse, error) {
-	results := []api.ListSecretResponse{}
+func (db *SqliteDatabase) List() (*secretsv1.ListSecretsResponse, error) {
+	results := []*secretsv1.SecretMetadata{}
 	var secrets []database.SecretRecord
 
 	if err := db.sql.Find(&secrets).Error; err != nil {
@@ -46,8 +48,9 @@ func (db *SqliteDatabase) List() ([]api.ListSecretResponse, error) {
 
 	for _, secret := range secrets {
 		var valueRecords []database.ValueRecord
-		var secretVersions []api.SecretVersion
+		var secretVersions []uint32
 
+		// TODO: select top 1 to get most recent version
 		if err := db.sql.Where("secret_record_id = ?", secret.ID).Order("version DESC").Find(&valueRecords).Error; err != nil {
 			return nil, err
 		}
@@ -56,24 +59,24 @@ func (db *SqliteDatabase) List() ([]api.ListSecretResponse, error) {
 			secretVersions = append(secretVersions, secretValue.Version)
 		}
 
-		results = append(results, api.ListSecretResponse{
-			Key:      secret.Key,
-			Versions: secretVersions,
+		results = append(results, &secretsv1.SecretMetadata{
+			Key:     secret.Key,
+			Version: secretVersions,
 		})
 	}
 
-	return results, nil
+	return &secretsv1.ListSecretsResponse{Secrets: results}, nil
 }
 
 // Create a new secret.
-func (db *SqliteDatabase) Create(request api.CreateSecretRequest) error {
+func (db *SqliteDatabase) Create(request *secretsv1.CreateSecretRequest) error {
 	existingSecret := db.sql.Find(&database.SecretRecord{}, "key = ?", request.Key)
 	if existingSecret.Error != nil {
 		return existingSecret.Error
 	}
 
 	if existingSecret.RowsAffected > 0 {
-		return api.ErrorSecretAlreadyExists
+		return errors.New("secret already exists")
 	}
 
 	return db.sql.Transaction(func(tx *gorm.DB) error {
@@ -100,27 +103,28 @@ func (db *SqliteDatabase) Create(request api.CreateSecretRequest) error {
 }
 
 // Retrieve the latest version of a secret.
-func (db *SqliteDatabase) Read(request api.ReadSecretRequest) (api.Secret, error) {
+func (db *SqliteDatabase) Read(request *secretsv1.GetSecretRequest) (*secretsv1.GetSecretResponse, error) {
 	var requestedSecret database.SecretRecord
 	var latestValue database.ValueRecord
 
 	if err := db.sql.First(&requestedSecret, "key = ?", request.Key).Error; err != nil {
-		return api.Secret{}, err
+		return nil, err
 	}
 
 	if err := db.sql.Where("secret_record_id = ?", requestedSecret.ID).Order("version DESC").Limit(1).Find(&latestValue).Error; err != nil {
-		return api.Secret{}, err
+		return nil, err
 	}
 
-	return api.Secret{
-		Key:     requestedSecret.Key,
-		Value:   latestValue.Value,
-		Version: latestValue.Version,
+	return &secretsv1.GetSecretResponse{
+		Secret: &secretsv1.Secret{
+			Key:   requestedSecret.Key,
+			Value: latestValue.Value,
+		},
 	}, nil
 }
 
 // Create a new version of an existing secret.
-func (db *SqliteDatabase) Update(request api.UpdateSecretRequest) error {
+func (db *SqliteDatabase) Update(request *secretsv1.UpdateSecretRequest) error {
 	var secretRecord database.SecretRecord
 
 	if err := db.sql.First(&secretRecord, "key = ?", request.Key).Error; err != nil {
@@ -161,7 +165,7 @@ func (db *SqliteDatabase) Update(request api.UpdateSecretRequest) error {
 }
 
 // Delete a secret and all its versions.
-func (db *SqliteDatabase) Delete(request api.DeleteSecretRequest) error {
+func (db *SqliteDatabase) Delete(request *secretsv1.DeleteSecretRequest) error {
 	var secretRecord database.SecretRecord
 	if err := db.sql.Where("key = ?", request.Key).First(&secretRecord).Error; err != nil {
 		return err
@@ -186,7 +190,7 @@ func (db *SqliteDatabase) Delete(request api.DeleteSecretRequest) error {
 }
 
 // Revert a secret to a previous version.
-func (db *SqliteDatabase) Revert(request api.RevertSecretRequest) error {
+func (db *SqliteDatabase) Revert(request *secretsv1.RevertSecretRequest) error {
 	var secretRecord database.SecretRecord
 	if err := db.sql.Where("key = ?", request.Key).First(&secretRecord).Error; err != nil {
 		return err
@@ -199,7 +203,7 @@ func (db *SqliteDatabase) Revert(request api.RevertSecretRequest) error {
 		}
 
 		if len(allValues) == 1 {
-			return api.ErrorCannotRevert
+			return errors.New("cannot revert oldest version of secret")
 		}
 
 		if err := tx.Delete(allValues[0]).Error; err != nil {
