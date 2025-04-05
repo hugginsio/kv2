@@ -19,6 +19,8 @@ import (
 	"git.huggins.io/kv2/internal/server"
 	"git.huggins.io/kv2/internal/version"
 	"github.com/rs/zerolog/log"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 )
 
 func main() {
@@ -84,7 +86,7 @@ func main() {
 	var listener net.Listener
 
 	if appConfig.DevMode {
-		ln, err := net.Listen("tcp", ":80")
+		ln, err := net.Listen("tcp", ":8080")
 		if err != nil {
 			log.Fatal().Err(err).Str("addr", ln.Addr().String()).Msg("failed to listen")
 		}
@@ -97,7 +99,7 @@ func main() {
 	// go ServeHealthEndpoint()
 
 	log.Info().Str("addr", listener.Addr().String()).Msg("serving API")
-	if err := http.Serve(listener, mux); err != nil {
+	if err := http.Serve(listener, h2c.NewHandler(mux, &http2.Server{})); err != nil {
 		log.Error().Err(err).Msg("failed to start server")
 	}
 }

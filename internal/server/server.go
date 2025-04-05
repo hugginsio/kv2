@@ -36,14 +36,14 @@ func Initialize(config Configuration) *HttpServer {
 		database: *config.Database,
 	}
 
-	path, handler := secretsv1connect.NewKv2ServiceHandler(server)
+	path, handler := secretsv1connect.NewKv2ServiceHandler(server, connect.WithCompressMinBytes(860))
 	config.Mux.Handle(path, handler)
 
 	return server
 }
 
 func (h *HttpServer) CreateSecret(ctx context.Context, req *connect.Request[secretsv1.CreateSecretRequest]) (*connect.Response[secretsv1.CreateSecretResponse], error) {
-	return nil, nil
+	return &connect.Response[secretsv1.CreateSecretResponse]{Msg: &secretsv1.CreateSecretResponse{Secret: &secretsv1.SecretMetadata{Key: "key", Version: []uint32{1}}}}, nil
 }
 
 func (h *HttpServer) GetSecret(ctx context.Context, req *connect.Request[secretsv1.GetSecretRequest]) (*connect.Response[secretsv1.GetSecretResponse], error) {
