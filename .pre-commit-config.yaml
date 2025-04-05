@@ -23,4 +23,3 @@ repos:
     hooks:
       - id: buf-lint
       - id: buf-format
-      - id: buf-generate
