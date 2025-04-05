@@ -7,7 +7,7 @@
 
 ## ✨ Features
 
-- **Simple**: built as a single binary or Docker container, with only a REST API for management.
+- **Simple**: deployed as a single binary or Docker container, with a flexible API for management.
 - **Encrypted**: secrets are encrypted at rest using [age][1] and user-controlled keys.
 - **Versioned**: up to nine versions of each secret are stored to provide basic change history.
 - **Secure**: built with the [Tailscale][0] client library to provide secure access to the API.
@@ -21,15 +21,16 @@ These features makes `kv2` the perfect secrets management solution for my homela
 If you are just looking to move fast and break things, here is the server container running in development mode. No Tailscale, no persistence, and no encryption.
 
 ```sh
-docker run --rm --name kv2 -p 80:8080 -e KV2_DEV_MODE=true ghcr.io/hugginsio/kv2:latest
+docker run --rm --name kv2 -p 8081:8081 -e KV2_DEV_MODE=true ghcr.io/hugginsio/kv2:latest
 ```
 
 ## 📚 Documentation
 
 Additional documentation can be found in the [docs](docs) directory.
 
-- [API Reference](docs/api.md)
+- [API Introduction](docs/api.md)
 - [Configuration and Deployment](docs/configure-and-deploy.md)
+- [Protocol Reference](docs/protocol.md)
 
 ## 🤝🏻 Thanks
 

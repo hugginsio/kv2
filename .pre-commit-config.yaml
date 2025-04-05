@@ -18,3 +18,8 @@ repos:
     rev: v0.16.0
     hooks:
       - id: yamlfmt
+  - repo: https://github.com/bufbuild/buf/
+    rev: 3905aaefcbef156244357819fe1da46ec1af448f # v1.51.0
+    hooks:
+      - id: buf-lint
+      - id: buf-format
