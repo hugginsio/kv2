@@ -31,6 +31,7 @@ var readCmd = &cobra.Command{
 			Key: args[0],
 		}
 
+		// TODO: usage of get and read needs to be aligned
 		res, err := kv2.GetSecret(cmd.Context(), &connect.Request[secretsv1.GetSecretRequest]{Msg: req})
 		if err != nil {
 			cli.PrintErrorOutput(jsonOutput, err)
