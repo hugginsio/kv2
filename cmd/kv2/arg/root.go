@@ -22,7 +22,7 @@ var rootCmd = &cobra.Command{
 		serverUrlEnv, exists := os.LookupEnv("KV2_SERVER_URL")
 		if !exists {
 			// TODO: attempt to use tailscale CLI to automatically determine URL?
-			return errors.New("could not determine server URL")
+			return errors.New("KV2_SERVER_URL not found in environment")
 		}
 
 		opts := connect.WithClientOptions(
