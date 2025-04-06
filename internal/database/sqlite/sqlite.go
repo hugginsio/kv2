@@ -60,8 +60,8 @@ func (db *SqliteDatabase) List() (*secretsv1.ListSecretsResponse, error) {
 		}
 
 		results = append(results, &secretsv1.SecretMetadata{
-			Key:     secret.Key,
-			Version: secretVersions,
+			Key:      secret.Key,
+			Versions: secretVersions,
 		})
 	}
 

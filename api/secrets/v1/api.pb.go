@@ -85,8 +85,8 @@ func (x *Secret) GetVersion() uint32 {
 // SecretMetadata represents a secret and all its versions.
 type SecretMetadata struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`                 // The plain text key of the secret.
-	Version       []uint32               `protobuf:"varint,2,rep,packed,name=version,proto3" json:"version,omitempty"` // All versions of the secret.
+	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`                   // The plain text key of the secret.
+	Versions      []uint32               `protobuf:"varint,2,rep,packed,name=versions,proto3" json:"versions,omitempty"` // All versions of the secret.
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -128,9 +128,9 @@ func (x *SecretMetadata) GetKey() string {
 	return ""
 }
 
-func (x *SecretMetadata) GetVersion() []uint32 {
+func (x *SecretMetadata) GetVersions() []uint32 {
 	if x != nil {
-		return x.Version
+		return x.Versions
 	}
 	return nil
 }
@@ -766,10 +766,10 @@ const file_secrets_v1_api_proto_rawDesc = "" +
 	"\x06Secret\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\fR\x05value\x12\x18\n" +
-	"\aversion\x18\x03 \x01(\rR\aversion\"<\n" +
+	"\aversion\x18\x03 \x01(\rR\aversion\">\n" +
 	"\x0eSecretMetadata\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12\x18\n" +
-	"\aversion\x18\x02 \x03(\rR\aversion\"=\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x1a\n" +
+	"\bversions\x18\x02 \x03(\rR\bversions\"=\n" +
 	"\x13CreateSecretRequest\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\fR\x05value\"J\n" +
