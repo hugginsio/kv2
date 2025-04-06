@@ -8,9 +8,11 @@ import (
 	"fmt"
 	"os"
 	"text/tabwriter"
-
-	"git.huggins.io/kv2/api"
 )
+
+type ErrorResponse struct {
+	Message string `json:"message"`
+}
 
 func PrintTable(headers []string, rows [][]string) {
 	// TODO
@@ -35,7 +37,7 @@ func PrintTable(headers []string, rows [][]string) {
 
 func PrintErrorOutput(asJson bool, err error) {
 	if asJson {
-		json.NewEncoder(os.Stdout).Encode(api.ErrorResponse{Message: err.Error()})
+		json.NewEncoder(os.Stdout).Encode(ErrorResponse{Message: err.Error()})
 	} else {
 		fmt.Println(err)
 	}
