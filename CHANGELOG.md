@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.10.0](https://github.com/hugginsio/kv2/compare/v0.8.0...v0.10.0) (2025-04-06)
+
+
+### ⚠ BREAKING CHANGES
+
+* re-implement server with Connect RPC ([#35](https://github.com/hugginsio/kv2/issues/35))
+
+### Features
+
+* add kv2 CLI ([#36](https://github.com/hugginsio/kv2/issues/36)) ([e1bf8cf](https://github.com/hugginsio/kv2/commit/e1bf8cfec04458dfce2c5262e07612922dba5ea2))
+* create FUNDING.yaml ([#33](https://github.com/hugginsio/kv2/issues/33)) ([ecac217](https://github.com/hugginsio/kv2/commit/ecac21702bd5dded43c3cab7cda91cdfdaeff428))
+* re-implement server with Connect RPC ([#35](https://github.com/hugginsio/kv2/issues/35)) ([206c96f](https://github.com/hugginsio/kv2/commit/206c96fc84e27958e93e2aeba9de89e5718f3dc1))
+
 ## [0.8.0](https://github.com/hugginsio/kv2/compare/v0.7.0...v0.8.0) (2025-03-29)
 
 
