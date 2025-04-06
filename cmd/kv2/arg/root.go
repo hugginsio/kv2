@@ -4,25 +4,40 @@
 package arg
 
 import (
+	"errors"
+	"net/http"
 	"os"
 
-	"git.huggins.io/kv2/client"
+	"connectrpc.com/connect"
+	"git.huggins.io/kv2/api/secrets/v1/secretsv1connect"
 	"github.com/spf13/cobra"
 )
 
-var kv2 *client.Client
-var output string
 var jsonOutput bool
+var kv2 secretsv1connect.Kv2ServiceClient
 var rootCmd = &cobra.Command{
 	Use:   "kv2",
 	Short: "kv2 provides an interface for your secrets manager",
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		kv2 = client.NewClient("http://kv2")
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		serverUrlEnv, exists := os.LookupEnv("KV2_SERVER_URL")
+		if !exists {
+			// TODO: attempt to use tailscale CLI to automatically determine URL?
+			return errors.New("could not determine server URL")
+		}
+
+		opts := connect.WithClientOptions(
+			connect.WithCompressMinBytes(1280),
+		)
+
+		kv2 = secretsv1connect.NewKv2ServiceClient(http.DefaultClient, serverUrlEnv, opts)
+
+		return nil
 	},
 }
 
 func Execute() {
 	err := rootCmd.Execute()
+
 	if err != nil {
 		os.Exit(1)
 	}
@@ -30,4 +45,5 @@ func Execute() {
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&jsonOutput, "json", "j", false, "JSON output")
+	rootCmd.PersistentFlags().String("config", "", "Path to config file")
 }
