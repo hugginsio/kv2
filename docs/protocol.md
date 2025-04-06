@@ -226,7 +226,7 @@ SecretMetadata represents a secret and all its versions.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | key | [string](#string) |  | The plain text key of the secret. |
-| version | [uint32](#uint32) | repeated | All versions of the secret. |
+| versions | [uint32](#uint32) | repeated | All versions of the secret. |
 
 
 

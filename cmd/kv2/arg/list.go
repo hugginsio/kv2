@@ -26,14 +26,15 @@ var listCmd = &cobra.Command{
 		}
 
 		if jsonOutput {
-			json.NewEncoder(os.Stdout).Encode(res)
+			json.NewEncoder(os.Stdout).Encode(res.Msg.Secrets)
 			return
 		}
 
 		var data [][]string
 
 		for _, s := range res.Msg.Secrets {
-			data = append(data, []string{s.Key, fmt.Sprintf("%d", len(s.Version))})
+			// TODO: we need to list all versions here, not just show the latest
+			data = append(data, []string{s.Key, fmt.Sprintf("%d", len(s.Versions))})
 		}
 
 		cli.PrintTable([]string{"KEY", "VERSION"}, data)

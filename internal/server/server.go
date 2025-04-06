@@ -49,7 +49,7 @@ func (h *HttpServer) CreateSecret(ctx context.Context, req *connect.Request[secr
 	}
 
 	res := &secretsv1.CreateSecretResponse{
-		Secret: &secretsv1.SecretMetadata{Key: req.Msg.Key, Version: []uint32{1}},
+		Secret: &secretsv1.SecretMetadata{Key: req.Msg.Key, Versions: []uint32{1}},
 	}
 
 	return &connect.Response[secretsv1.CreateSecretResponse]{Msg: res}, nil
