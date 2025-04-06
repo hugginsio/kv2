@@ -4,6 +4,7 @@
 package arg
 
 import (
+	"fmt"
 	"os"
 
 	"connectrpc.com/connect"
@@ -35,6 +36,11 @@ var createCmd = &cobra.Command{
 			req.Value = bytes
 		}
 
+		if req.Value == nil {
+			fmt.Print("Enter value: ")
+			fmt.Scanln(&req.Value)
+		}
+
 		if _, err := kv2.CreateSecret(cmd.Context(), &connect.Request[secretsv1.CreateSecretRequest]{Msg: req}); err != nil {
 			cli.PrintErrorOutput(jsonOutput, err)
 			os.Exit(1)
@@ -47,7 +53,6 @@ func init() {
 	createCmd.Flags().String("from-file", "", "create secret from file")
 
 	createCmd.MarkFlagsMutuallyExclusive("from-literal", "from-file")
-	createCmd.MarkFlagsOneRequired("from-literal", "from-file")
 
 	rootCmd.AddCommand(createCmd)
 }
