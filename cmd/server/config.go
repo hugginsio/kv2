@@ -15,8 +15,10 @@ type Configuration struct {
 	CloudStorage     string
 	ConfigurationDir string
 	DevMode          bool
+	Hostname         string
 	PrivateKey       string
 	PublicKey        string
+	Tls              bool
 	TsAuthKey        string
 }
 
@@ -25,8 +27,10 @@ func RetrieveConfiguration() Configuration {
 	configuration := Configuration{
 		CloudStorage: os.Getenv("KV2_CLOUD_STORAGE"),
 		DevMode:      os.Getenv("KV2_DEV_MODE") == "true",
+		Hostname:     os.Getenv("KV2_HOSTNAME"),
 		PrivateKey:   os.Getenv("KV2_PRIVATE_KEY"),
 		PublicKey:    os.Getenv("KV2_PUBLIC_KEY"),
+		Tls:          os.Getenv("KV2_TLS") == "true",
 		TsAuthKey:    os.Getenv("KV2_TS_AUTHKEY"),
 	}
 
@@ -44,6 +48,10 @@ func preflight(configuration Configuration) Configuration {
 		log.Fatal().Msg("KV2_TS_AUTHKEY is required outside of development mode")
 	} else {
 		configuration.TsAuthKey = kms.KmsMiddleware(configuration.TsAuthKey)
+	}
+
+	if configuration.Hostname == "" {
+		configuration.Hostname = "kv2"
 	}
 
 	if !configuration.DevMode && configuration.PrivateKey == "" {
