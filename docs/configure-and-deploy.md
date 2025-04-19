@@ -6,11 +6,13 @@ The `kv2` server configuration is controlled through environment variables. The 
 
 | Variable            | Description                                                                                 |
 | ------------------- | ------------------------------------------------------------------------------------------- |
-| `KV2_DEV_MODE`      | If enabled, the server will use an in-memory database and not attempt a Tailnet connection. |
+| `KV2_CLOUD_STORAGE` | The cloud storage provider and path to use for database backup & restore.                   |
+| `KV2_DEV_MODE`      | If true, the server will use an in-memory database and not attempt a Tailnet connection.    |
+| `KV2_HOSTNAME`      | Optionally change the hostname used when connecting to your Tailnet.                        |
 | `KV2_PRIVATE_KEY`   | The age private key used to decrypt secrets (`AGE-SECRET-KEY*`).                            |
 | `KV2_PUBLIC_KEY`    | The age public key used to encrypt secrets (`age1*`).                                       |
+| `KV2_TLS`           | If true, the server will require the use of TLS to interact with the API.                   |
 | `KV2_TS_AUTHKEY`    | The authentication key used to connect to the Tailnet.                                      |
-| `KV2_CLOUD_STORAGE` | The cloud storage provider and path to use for database backup & restore.                   |
 
 ### 🔑 External KMS Support
 
