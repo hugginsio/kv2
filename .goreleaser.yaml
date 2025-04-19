@@ -1,0 +1,60 @@
+# https://goreleaser.com
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+
+version: 2
+project_name: kv2
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: "kv2"
+    main: "./cmd/kv2"
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - "-buildvcs" # include VCS information
+    gcflags:
+      - "all=-l -C" # disable function inlining, error message column printing
+    ldflags:
+      - "-s -w" # disable symbol table, DWARF generation
+    mod_timestamp: "{{ .CommitTimestamp }}"
+    goos:
+      - darwin # do not use universal binaries - they triple the artifact size
+      - linux
+      - windows
+    ignore:
+      - goos: linux
+        goarch: "386"
+      - goos: windows
+        goarch: "arm64"
+      - goos: windows
+        goarch: "386"
+
+archives:
+  - formats: ["tar.gz"]
+    # this name template makes the OS and Arch compatible with the results of `uname`.
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        formats: ["zip"]
+
+changelog:
+  disable: true
+
+release:
+  mode: keep-existing
+  github:
+    owner: hugginsio
+    name: kv2
+  target_commitish: "{{ .Commit }}"
+  include_meta: false
+
+brews:
+  - repository:
+      owner: hugginsio
+      name: homebrew-tap
+    homepage: https://git.huggins.io/kv2
+    test: |-
+      system "#{bin}/kv2 --help"
