@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.0](https://github.com/hugginsio/kv2/compare/v0.10.0...v0.11.0) (2025-04-19)
+
+
+### Features
+
+* **cli:** prompt user if no flags provided to create ([#41](https://github.com/hugginsio/kv2/issues/41)) ([09cd196](https://github.com/hugginsio/kv2/commit/09cd196310fe6901ff81dc4c9d579d91c8711723))
+* configure hostname, TLS ([#44](https://github.com/hugginsio/kv2/issues/44)) ([b9420a0](https://github.com/hugginsio/kv2/commit/b9420a0104674257d7221545581b109276f261e4))
+
 ## [0.10.0](https://github.com/hugginsio/kv2/compare/v0.8.0...v0.10.0) (2025-04-06)
 
 
