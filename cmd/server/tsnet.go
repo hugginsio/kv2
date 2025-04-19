@@ -12,10 +12,9 @@ type TsnetServer struct{}
 
 func Tsnet(config Configuration) net.Listener {
 	server := &tsnet.Server{
-		AuthKey:   config.TsAuthKey,
-		Ephemeral: true,
-		Hostname:  "kv2",
-		UserLogf:  log.Printf,
+		AuthKey:  config.TsAuthKey,
+		Hostname: config.Hostname,
+		UserLogf: log.Printf,
 	}
 
 	_, err := server.Up(context.Background())
@@ -23,11 +22,17 @@ func Tsnet(config Configuration) net.Listener {
 		log.Fatal().Err(err).Msg("Tailscale failed to start")
 	}
 
-	if len(server.CertDomains()) == 0 {
-		log.Fatal().Msg("no TLS domains found in Tailscale")
+	if config.Tls && len(server.CertDomains()) == 0 {
+		log.Fatal().Msg("no TLS domains found in Tailscale, but TLS is required")
 	}
 
-	ln, err := server.ListenTLS("tcp", ":443")
+	var ln net.Listener
+	if config.Tls {
+		ln, err = server.ListenTLS("tcp", ":443")
+	} else {
+		ln, err = server.Listen("tcp", ":8080")
+	}
+
 	if err != nil {
 		log.Fatal().Err(err).Str("addr", ln.Addr().String()).Msg("failed to listen")
 	}
