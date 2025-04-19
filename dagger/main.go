@@ -31,7 +31,8 @@ func (m *Kv2) devEnv(
 		WithMountedCache("/go/build-cache", dag.CacheVolume("go-build-124")).
 		WithEnvVariable("GOCACHE", "/go/build-cache").
 		WithWorkdir("/go/src/").
-		WithExec([]string{"go", "mod", "download"})
+		WithExec([]string{"go", "mod", "download"}).
+		WithExec([]string{"apk", "add", "--no-cache", "git"})
 }
 
 // Enable the use of the Semantic Version Utility
