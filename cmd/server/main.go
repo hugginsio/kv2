@@ -24,7 +24,7 @@ import (
 )
 
 func main() {
-	log.Info().Str("version", version.VersionInfo().GitVersion).Str("commit", version.VersionInfo().GitCommit).Str("platform", version.VersionInfo().Platform).Msg("kv2 is starting")
+	log.Info().Str("version", version.VersionInfo().GitVersion).Str("platform", version.VersionInfo().Platform).Msg("kv2 is starting")
 
 	appConfig := RetrieveConfiguration()
 
