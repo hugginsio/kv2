@@ -38,3 +38,18 @@ func (m *Kv2) BuildServerContainer(
 		WithExposedPort(8080).
 		WithExposedPort(80) // used for development mode ONLY
 }
+
+func (m *Kv2) BuildCli(
+	ctx context.Context,
+	tag string,
+	// +optional
+	token *dagger.Secret,
+) (string, error) {
+	source := dag.Git("https://github.com/hugginsio/kv2.git", dagger.GitOpts{KeepGitDir: true}).Tag(tag).Tree()
+	return dag.Container().
+		From("ghcr.io/goreleaser/goreleaser:v2.8.2").
+		WithDirectory("/go/src/github.com/hugginsio/kv2/", source).
+		WithWorkdir("/go/src/github.com/hugginsio/kv2/").
+		WithExec([]string{"goreleaser", "build"}).
+		Stdout(ctx)
+}
