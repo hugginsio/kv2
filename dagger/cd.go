@@ -16,7 +16,7 @@ func (m *Kv2) buildServer(
 	return m.devEnv(ctx, source, nil).
 		WithWorkdir("cmd/server").
 		WithEnvVariable("CGO_ENABLED", "0").
-		WithExec([]string{"go", "build", "-ldflags", "-s -w", "-gcflags=all=-l -C", "-o", "/app/server", "."}).
+		WithExec([]string{"go", "build", "-ldflags", "-s -w", "-gcflags=all=-l -C", "-buildvcs", "-o", "/app/server", "."}).
 		File("/app/server")
 }
 
@@ -37,4 +37,23 @@ func (m *Kv2) BuildServerContainer(
 		WithEntrypoint([]string{"/app/server"}).
 		WithExposedPort(8080).
 		WithExposedPort(80) // used for development mode ONLY
+}
+
+func (m *Kv2) BuildCli(
+	ctx context.Context,
+	tag string,
+	// +optional
+	token *dagger.Secret,
+) (string, error) {
+	source := dag.Git("https://github.com/hugginsio/kv2.git", dagger.GitOpts{KeepGitDir: true}).Tag(tag).Tree()
+	return dag.Container().
+		From("ghcr.io/goreleaser/goreleaser:v2.8.2").
+		WithMountedCache("/go/pkg/mod/", dag.CacheVolume("go-mod-124")).
+		WithEnvVariable("GOMODCACHE", "/go/pkg/mod").
+		WithMountedCache("/go/build-cache", dag.CacheVolume("go-build-124")).
+		WithEnvVariable("GOCACHE", "/go/build-cache").
+		WithDirectory("/go/src/github.com/hugginsio/kv2/", source).
+		WithWorkdir("/go/src/github.com/hugginsio/kv2/").
+		WithExec([]string{"goreleaser", "build"}).
+		Stdout(ctx)
 }

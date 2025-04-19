@@ -8,15 +8,18 @@ tasks:
     cmds:
       - task -l
       - dagger functions
+  cli:build:
+    desc: build the kv2 CLI
+    cmd: "goreleaser build --snapshot --clean --single-target"
   test:
     desc: run all tests
-    cmd: dagger call test --source=.
+    cmd: "dagger call test --source=."
   server:dev:
     desc: run the server directly
     dir: "cmd/server"
-    cmd: go run .
+    cmd: "go run ."
     dotenv:
       - .env
   server:container:
     desc: spin up a server container in development mode
-    cmd: dagger call build-server-container with-env-variable --name KV2_DEV_MODE --value true up --ports 8080:80
+    cmd: "dagger call build-server-container with-env-variable --name KV2_DEV_MODE --value true up --ports 8080:80"
