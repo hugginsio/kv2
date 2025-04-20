@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.4](https://github.com/hugginsio/kv2/compare/v0.11.3...v0.11.4) (2025-04-20)
+
+
+### Bug Fixes
+
+* do not use app token for GHCR ([#55](https://github.com/hugginsio/kv2/issues/55)) ([503a2c5](https://github.com/hugginsio/kv2/commit/503a2c5da219870c130ff82a6176efcd0738ab4f))
+
 ## [0.11.3](https://github.com/hugginsio/kv2/compare/v0.11.2...v0.11.3) (2025-04-20)
 
 
