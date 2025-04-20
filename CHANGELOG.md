@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.2](https://github.com/hugginsio/kv2/compare/v0.11.1...v0.11.2) (2025-04-20)
+
+
+### Bug Fixes
+
+* **cli:** mount token for goreleaser ([#51](https://github.com/hugginsio/kv2/issues/51)) ([36c70ee](https://github.com/hugginsio/kv2/commit/36c70eefb23ff48876b1de4a67d270284051df0c))
+
 ## [0.11.1](https://github.com/hugginsio/kv2/compare/v0.11.0...v0.11.1) (2025-04-20)
 
 
