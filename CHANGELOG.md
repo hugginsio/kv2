@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/hugginsio/kv2/compare/v0.11.0...v0.11.1) (2025-04-20)
+
+
+### Bug Fixes
+
+* **cli:** release behavior ([#49](https://github.com/hugginsio/kv2/issues/49)) ([48a44d5](https://github.com/hugginsio/kv2/commit/48a44d5b1090dfde70eb3209ca118b5298bde0af))
+
 ## [0.11.0](https://github.com/hugginsio/kv2/compare/v0.10.0...v0.11.0) (2025-04-20)
 
 
