@@ -5,6 +5,7 @@ package arg
 
 import (
 	"errors"
+	"net"
 	"net/http"
 	"os"
 	"time"
@@ -34,7 +35,15 @@ var rootCmd = &cobra.Command{
 			CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
 				return http.ErrUseLastResponse
 			},
-			Timeout: 7 * time.Second,
+			Timeout: 20 * time.Second,
+			Transport: &http.Transport{
+				Dial: (&net.Dialer{
+					Timeout: 3 * time.Second,
+				}).Dial,
+				TLSHandshakeTimeout:   3 * time.Second,
+				ResponseHeaderTimeout: 3 * time.Second,
+				ExpectContinueTimeout: 3 * time.Second,
+			},
 		}
 
 		kv2 = secretsv1connect.NewKv2ServiceClient(client, serverUrlEnv, opts)
