@@ -8,6 +8,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # 4.2.2
       - uses: actions/create-github-app-token@21cfef2b496dd8ef5b904c159339626a10ad380e # 1.11.6
@@ -21,7 +23,7 @@ jobs:
           args: "release-server --tag=$TAG --registry=ghcr.io --image-name=$IMAGE_NAME --username=$REGISTRY_USERNAME --password=env://REGISTRY_PASSWORD"
         env:
           IMAGE_NAME: ${{ github.repository }}
-          REGISTRY_PASSWORD: ${{ steps.app-token.outputs.token }}
+          REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
           REGISTRY_USERNAME: ${{ github.repository_owner }}
           TAG: ${{ github.event.release.tag_name }}
       - uses: dagger/dagger-for-github@e47aba410ef9bb9ed81a4d2a97df31061e5e842e # 8.0.0
