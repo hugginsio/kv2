@@ -13,6 +13,7 @@ import (
 	"git.huggins.io/kv2/internal/backup"
 	"git.huggins.io/kv2/internal/crypto"
 	"git.huggins.io/kv2/internal/database"
+	"git.huggins.io/kv2/internal/version"
 )
 
 type Configuration struct {
@@ -108,4 +109,8 @@ func (h *HttpServer) Backup(ctx context.Context, req *connect.Request[secretsv1.
 	}
 
 	return &connect.Response[secretsv1.BackupResponse]{Msg: &secretsv1.BackupResponse{}}, nil
+}
+
+func (h *HttpServer) ApplicationVersionInfo(ctx context.Context, req *connect.Request[secretsv1.ApplicationVersionInfoRequest]) (*connect.Response[secretsv1.ApplicationVersionInfoResponse], error) {
+	return &connect.Response[secretsv1.ApplicationVersionInfoResponse]{Msg: &secretsv1.ApplicationVersionInfoResponse{Info: version.VersionInfo()}}, nil
 }
