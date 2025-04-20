@@ -59,5 +59,5 @@ func init() {
 	updateCmd.MarkFlagsMutuallyExclusive("from-literal", "from-file")
 	updateCmd.MarkFlagsOneRequired("from-literal", "from-file")
 
-	rootCmd.AddCommand(updateCmd)
+	RootCmd.AddCommand(updateCmd)
 }

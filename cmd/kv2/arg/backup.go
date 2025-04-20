@@ -28,5 +28,5 @@ var backupCmd = &cobra.Command{
 func init() {
 	backupCmd.Flags().StringP("name", "n", "kv2.db", "name of the backup")
 
-	rootCmd.AddCommand(backupCmd)
+	RootCmd.AddCommand(backupCmd)
 }

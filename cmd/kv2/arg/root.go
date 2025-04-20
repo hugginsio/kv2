@@ -17,7 +17,7 @@ import (
 
 var jsonOutput bool
 var kv2 secretsv1connect.Kv2ServiceClient
-var rootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{
 	Use:   "kv2",
 	Short: "kv2 provides an interface for your secrets manager",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
@@ -53,7 +53,7 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
-	err := rootCmd.Execute()
+	err := RootCmd.Execute()
 
 	if err != nil {
 		os.Exit(1)
@@ -61,6 +61,6 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.PersistentFlags().BoolVarP(&jsonOutput, "json", "j", false, "JSON output")
-	rootCmd.PersistentFlags().String("config", "", "Path to config file")
+	RootCmd.PersistentFlags().BoolVarP(&jsonOutput, "json", "j", false, "JSON output")
+	RootCmd.PersistentFlags().String("config", "", "Path to config file")
 }
