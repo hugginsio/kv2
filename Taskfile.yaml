@@ -11,6 +11,9 @@ tasks:
   cli:build:
     desc: build the kv2 CLI
     cmd: "goreleaser build --snapshot --clean --single-target"
+  cli:docs:
+    desc: generate the kv2 CLI documentation
+    cmd: "go run ./internal/cli-docgen/"
   test:
     desc: run all tests
     cmd: "dagger call test --source=."
