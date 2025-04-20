@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.11.0](https://github.com/hugginsio/kv2/compare/v0.10.0...v0.11.0) (2025-04-20)
+
+
+### Features
+
+* add endpoint for better version command ([#46](https://github.com/hugginsio/kv2/issues/46)) ([df60d1d](https://github.com/hugginsio/kv2/commit/df60d1d65e894bc52551bcd697169ebb0910ffd1))
+* **cli:** prompt user if no flags provided to create ([#41](https://github.com/hugginsio/kv2/issues/41)) ([09cd196](https://github.com/hugginsio/kv2/commit/09cd196310fe6901ff81dc4c9d579d91c8711723))
+* configure hostname, TLS ([#44](https://github.com/hugginsio/kv2/issues/44)) ([b9420a0](https://github.com/hugginsio/kv2/commit/b9420a0104674257d7221545581b109276f261e4))
+* fix version information, add goreleaser ([#45](https://github.com/hugginsio/kv2/issues/45)) ([8dc2c96](https://github.com/hugginsio/kv2/commit/8dc2c968fed48719976f53cafc0c9ecf99ab0ab7))
+* invert TLS setting ([#47](https://github.com/hugginsio/kv2/issues/47)) ([14e5fe5](https://github.com/hugginsio/kv2/commit/14e5fe5ef0b73ced76e1179cd520141e3323b223))
+
 ## [0.10.0](https://github.com/hugginsio/kv2/compare/v0.8.0...v0.10.0) (2025-04-06)
 
 
