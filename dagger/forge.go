@@ -26,7 +26,7 @@ func (m *Kv2) PullRequest(
 	return strings.Join([]string{lint, test}, "\n"), nil
 }
 
-func (m *Kv2) Release(
+func (m *Kv2) ReleaseServer(
 	ctx context.Context,
 	tag string,
 	registry string,

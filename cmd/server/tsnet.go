@@ -22,15 +22,15 @@ func Tsnet(config Configuration) net.Listener {
 		log.Fatal().Err(err).Msg("Tailscale failed to start")
 	}
 
-	if config.Tls && len(server.CertDomains()) == 0 {
+	if !config.NoTls && len(server.CertDomains()) == 0 {
 		log.Fatal().Msg("no TLS domains found in Tailscale, but TLS is required")
 	}
 
 	var ln net.Listener
-	if config.Tls {
-		ln, err = server.ListenTLS("tcp", ":443")
-	} else {
+	if config.NoTls {
 		ln, err = server.Listen("tcp", ":8080")
+	} else {
+		ln, err = server.ListenTLS("tcp", ":443")
 	}
 
 	if err != nil {

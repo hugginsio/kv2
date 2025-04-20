@@ -47,6 +47,9 @@ const (
 	Kv2ServiceListSecretsProcedure = "/secrets.v1.Kv2Service/ListSecrets"
 	// Kv2ServiceBackupProcedure is the fully-qualified name of the Kv2Service's Backup RPC.
 	Kv2ServiceBackupProcedure = "/secrets.v1.Kv2Service/Backup"
+	// Kv2ServiceApplicationVersionInfoProcedure is the fully-qualified name of the Kv2Service's
+	// ApplicationVersionInfo RPC.
+	Kv2ServiceApplicationVersionInfoProcedure = "/secrets.v1.Kv2Service/ApplicationVersionInfo"
 )
 
 // Kv2ServiceClient is a client for the secrets.v1.Kv2Service service.
@@ -58,6 +61,7 @@ type Kv2ServiceClient interface {
 	RevertSecret(context.Context, *connect.Request[v1.RevertSecretRequest]) (*connect.Response[v1.RevertSecretResponse], error)
 	ListSecrets(context.Context, *connect.Request[v1.ListSecretsRequest]) (*connect.Response[v1.ListSecretsResponse], error)
 	Backup(context.Context, *connect.Request[v1.BackupRequest]) (*connect.Response[v1.BackupResponse], error)
+	ApplicationVersionInfo(context.Context, *connect.Request[v1.ApplicationVersionInfoRequest]) (*connect.Response[v1.ApplicationVersionInfoResponse], error)
 }
 
 // NewKv2ServiceClient constructs a client for the secrets.v1.Kv2Service service. By default, it
@@ -113,18 +117,25 @@ func NewKv2ServiceClient(httpClient connect.HTTPClient, baseURL string, opts ...
 			connect.WithSchema(kv2ServiceMethods.ByName("Backup")),
 			connect.WithClientOptions(opts...),
 		),
+		applicationVersionInfo: connect.NewClient[v1.ApplicationVersionInfoRequest, v1.ApplicationVersionInfoResponse](
+			httpClient,
+			baseURL+Kv2ServiceApplicationVersionInfoProcedure,
+			connect.WithSchema(kv2ServiceMethods.ByName("ApplicationVersionInfo")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // kv2ServiceClient implements Kv2ServiceClient.
 type kv2ServiceClient struct {
-	createSecret *connect.Client[v1.CreateSecretRequest, v1.CreateSecretResponse]
-	getSecret    *connect.Client[v1.GetSecretRequest, v1.GetSecretResponse]
-	updateSecret *connect.Client[v1.UpdateSecretRequest, v1.UpdateSecretResponse]
-	deleteSecret *connect.Client[v1.DeleteSecretRequest, v1.DeleteSecretResponse]
-	revertSecret *connect.Client[v1.RevertSecretRequest, v1.RevertSecretResponse]
-	listSecrets  *connect.Client[v1.ListSecretsRequest, v1.ListSecretsResponse]
-	backup       *connect.Client[v1.BackupRequest, v1.BackupResponse]
+	createSecret           *connect.Client[v1.CreateSecretRequest, v1.CreateSecretResponse]
+	getSecret              *connect.Client[v1.GetSecretRequest, v1.GetSecretResponse]
+	updateSecret           *connect.Client[v1.UpdateSecretRequest, v1.UpdateSecretResponse]
+	deleteSecret           *connect.Client[v1.DeleteSecretRequest, v1.DeleteSecretResponse]
+	revertSecret           *connect.Client[v1.RevertSecretRequest, v1.RevertSecretResponse]
+	listSecrets            *connect.Client[v1.ListSecretsRequest, v1.ListSecretsResponse]
+	backup                 *connect.Client[v1.BackupRequest, v1.BackupResponse]
+	applicationVersionInfo *connect.Client[v1.ApplicationVersionInfoRequest, v1.ApplicationVersionInfoResponse]
 }
 
 // CreateSecret calls secrets.v1.Kv2Service.CreateSecret.
@@ -162,6 +173,11 @@ func (c *kv2ServiceClient) Backup(ctx context.Context, req *connect.Request[v1.B
 	return c.backup.CallUnary(ctx, req)
 }
 
+// ApplicationVersionInfo calls secrets.v1.Kv2Service.ApplicationVersionInfo.
+func (c *kv2ServiceClient) ApplicationVersionInfo(ctx context.Context, req *connect.Request[v1.ApplicationVersionInfoRequest]) (*connect.Response[v1.ApplicationVersionInfoResponse], error) {
+	return c.applicationVersionInfo.CallUnary(ctx, req)
+}
+
 // Kv2ServiceHandler is an implementation of the secrets.v1.Kv2Service service.
 type Kv2ServiceHandler interface {
 	CreateSecret(context.Context, *connect.Request[v1.CreateSecretRequest]) (*connect.Response[v1.CreateSecretResponse], error)
@@ -171,6 +187,7 @@ type Kv2ServiceHandler interface {
 	RevertSecret(context.Context, *connect.Request[v1.RevertSecretRequest]) (*connect.Response[v1.RevertSecretResponse], error)
 	ListSecrets(context.Context, *connect.Request[v1.ListSecretsRequest]) (*connect.Response[v1.ListSecretsResponse], error)
 	Backup(context.Context, *connect.Request[v1.BackupRequest]) (*connect.Response[v1.BackupResponse], error)
+	ApplicationVersionInfo(context.Context, *connect.Request[v1.ApplicationVersionInfoRequest]) (*connect.Response[v1.ApplicationVersionInfoResponse], error)
 }
 
 // NewKv2ServiceHandler builds an HTTP handler from the service implementation. It returns the path
@@ -222,6 +239,12 @@ func NewKv2ServiceHandler(svc Kv2ServiceHandler, opts ...connect.HandlerOption) 
 		connect.WithSchema(kv2ServiceMethods.ByName("Backup")),
 		connect.WithHandlerOptions(opts...),
 	)
+	kv2ServiceApplicationVersionInfoHandler := connect.NewUnaryHandler(
+		Kv2ServiceApplicationVersionInfoProcedure,
+		svc.ApplicationVersionInfo,
+		connect.WithSchema(kv2ServiceMethods.ByName("ApplicationVersionInfo")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/secrets.v1.Kv2Service/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case Kv2ServiceCreateSecretProcedure:
@@ -238,6 +261,8 @@ func NewKv2ServiceHandler(svc Kv2ServiceHandler, opts ...connect.HandlerOption) 
 			kv2ServiceListSecretsHandler.ServeHTTP(w, r)
 		case Kv2ServiceBackupProcedure:
 			kv2ServiceBackupHandler.ServeHTTP(w, r)
+		case Kv2ServiceApplicationVersionInfoProcedure:
+			kv2ServiceApplicationVersionInfoHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -273,4 +298,8 @@ func (UnimplementedKv2ServiceHandler) ListSecrets(context.Context, *connect.Requ
 
 func (UnimplementedKv2ServiceHandler) Backup(context.Context, *connect.Request[v1.BackupRequest]) (*connect.Response[v1.BackupResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("secrets.v1.Kv2Service.Backup is not implemented"))
+}
+
+func (UnimplementedKv2ServiceHandler) ApplicationVersionInfo(context.Context, *connect.Request[v1.ApplicationVersionInfoRequest]) (*connect.Response[v1.ApplicationVersionInfoResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("secrets.v1.Kv2Service.ApplicationVersionInfo is not implemented"))
 }

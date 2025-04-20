@@ -39,21 +39,23 @@ func (m *Kv2) BuildServerContainer(
 		WithExposedPort(80) // used for development mode ONLY
 }
 
-func (m *Kv2) BuildCli(
+func (m *Kv2) ReleaseCli(
 	ctx context.Context,
 	tag string,
 	// +optional
 	token *dagger.Secret,
 ) (string, error) {
 	source := dag.Git("https://github.com/hugginsio/kv2.git", dagger.GitOpts{KeepGitDir: true}).Tag(tag).Tree()
+
 	return dag.Container().
 		From("ghcr.io/goreleaser/goreleaser:v2.8.2").
+		WithSecretVariable("GITHUB_TOKEN", token).
 		WithMountedCache("/go/pkg/mod/", dag.CacheVolume("go-mod-124")).
 		WithEnvVariable("GOMODCACHE", "/go/pkg/mod").
 		WithMountedCache("/go/build-cache", dag.CacheVolume("go-build-124")).
 		WithEnvVariable("GOCACHE", "/go/build-cache").
 		WithDirectory("/go/src/github.com/hugginsio/kv2/", source).
 		WithWorkdir("/go/src/github.com/hugginsio/kv2/").
-		WithExec([]string{"goreleaser", "build"}).
+		WithExec([]string{"goreleaser", "release"}).
 		Stdout(ctx)
 }
