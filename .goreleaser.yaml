@@ -55,6 +55,7 @@ brews:
   - repository:
       owner: hugginsio
       name: homebrew-tap
+    directory: Formula
     homepage: https://git.huggins.io/kv2
     test: |-
       system "#{bin}/kv2 --help"
