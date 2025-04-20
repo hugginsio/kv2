@@ -16,9 +16,9 @@ type Configuration struct {
 	ConfigurationDir string
 	DevMode          bool
 	Hostname         string
+	NoTls            bool
 	PrivateKey       string
 	PublicKey        string
-	Tls              bool
 	TsAuthKey        string
 }
 
@@ -28,9 +28,9 @@ func RetrieveConfiguration() Configuration {
 		CloudStorage: os.Getenv("KV2_CLOUD_STORAGE"),
 		DevMode:      os.Getenv("KV2_DEV_MODE") == "true",
 		Hostname:     os.Getenv("KV2_HOSTNAME"),
+		NoTls:        os.Getenv("KV2_NO_TLS") == "true",
 		PrivateKey:   os.Getenv("KV2_PRIVATE_KEY"),
 		PublicKey:    os.Getenv("KV2_PUBLIC_KEY"),
-		Tls:          os.Getenv("KV2_TLS") == "true",
 		TsAuthKey:    os.Getenv("KV2_TS_AUTHKEY"),
 	}
 
