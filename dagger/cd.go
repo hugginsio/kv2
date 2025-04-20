@@ -39,7 +39,7 @@ func (m *Kv2) BuildServerContainer(
 		WithExposedPort(80) // used for development mode ONLY
 }
 
-func (m *Kv2) BuildCli(
+func (m *Kv2) ReleaseCli(
 	ctx context.Context,
 	tag string,
 	// +optional
@@ -54,6 +54,6 @@ func (m *Kv2) BuildCli(
 		WithEnvVariable("GOCACHE", "/go/build-cache").
 		WithDirectory("/go/src/github.com/hugginsio/kv2/", source).
 		WithWorkdir("/go/src/github.com/hugginsio/kv2/").
-		WithExec([]string{"goreleaser", "build"}).
+		WithExec([]string{"goreleaser", "release"}).
 		Stdout(ctx)
 }
