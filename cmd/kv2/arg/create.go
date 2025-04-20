@@ -54,5 +54,5 @@ func init() {
 
 	createCmd.MarkFlagsMutuallyExclusive("from-literal", "from-file")
 
-	rootCmd.AddCommand(createCmd)
+	RootCmd.AddCommand(createCmd)
 }

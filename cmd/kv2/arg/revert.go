@@ -39,5 +39,5 @@ var revertCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(revertCmd)
+	RootCmd.AddCommand(revertCmd)
 }

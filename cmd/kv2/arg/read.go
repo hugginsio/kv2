@@ -55,5 +55,5 @@ var readCmd = &cobra.Command{
 func init() {
 	readCmd.Flags().BoolP("decode", "d", false, "attempt to decode value base64")
 
-	rootCmd.AddCommand(readCmd)
+	RootCmd.AddCommand(readCmd)
 }
