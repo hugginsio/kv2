@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.5](https://github.com/hugginsio/kv2/compare/v0.11.4...v0.11.5) (2025-04-20)
+
+
+### Bug Fixes
+
+* **release:** allow app token to access tap repo ([#57](https://github.com/hugginsio/kv2/issues/57)) ([8fcd416](https://github.com/hugginsio/kv2/commit/8fcd416d17f55d9d2618dc0a75e2d0d23ac5465f))
+
 ## [0.11.4](https://github.com/hugginsio/kv2/compare/v0.11.3...v0.11.4) (2025-04-20)
 
 
