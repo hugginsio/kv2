@@ -24,11 +24,18 @@ If you are just looking to move fast and break things, here is the server contai
 docker run --rm --name kv2 -p 8081:8081 -e KV2_DEV_MODE=true ghcr.io/hugginsio/kv2:latest
 ```
 
+You can interact with the server using [the API](docs/api.md) or the provided CLI. You can download the CLI executable from the Releases page or install it with Homebrew:
+
+```sh
+brew install hugginsio/tap/kv2
+```
+
 ## 📚 Documentation
 
 Additional documentation can be found in the [docs](docs) directory.
 
 - [API Introduction](docs/api.md)
+- [Command Line Interface](docs/command-line-interface.md)
 - [Configuration and Deployment](docs/configure-and-deploy.md)
 - [Protocol Reference](docs/protocol.md)
 
