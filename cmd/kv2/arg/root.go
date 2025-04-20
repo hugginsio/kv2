@@ -5,8 +5,10 @@ package arg
 
 import (
 	"errors"
+	"net"
 	"net/http"
 	"os"
+	"time"
 
 	"connectrpc.com/connect"
 	"git.huggins.io/kv2/api/secrets/v1/secretsv1connect"
@@ -29,7 +31,22 @@ var rootCmd = &cobra.Command{
 			connect.WithCompressMinBytes(1280),
 		)
 
-		kv2 = secretsv1connect.NewKv2ServiceClient(http.DefaultClient, serverUrlEnv, opts)
+		client := &http.Client{
+			CheckRedirect: func(_ *http.Request, _ []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+			Timeout: 20 * time.Second,
+			Transport: &http.Transport{
+				Dial: (&net.Dialer{
+					Timeout: 3 * time.Second,
+				}).Dial,
+				TLSHandshakeTimeout:   3 * time.Second,
+				ResponseHeaderTimeout: 3 * time.Second,
+				ExpectContinueTimeout: 3 * time.Second,
+			},
+		}
+
+		kv2 = secretsv1connect.NewKv2ServiceClient(client, serverUrlEnv, opts)
 
 		return nil
 	},

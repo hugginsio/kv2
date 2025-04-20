@@ -4,6 +4,9 @@
 ## Table of Contents
 
 - [secrets/v1/api.proto](#secrets_v1_api-proto)
+    - [ApplicationVersionInfo](#secrets-v1-ApplicationVersionInfo)
+    - [ApplicationVersionInfoRequest](#secrets-v1-ApplicationVersionInfoRequest)
+    - [ApplicationVersionInfoResponse](#secrets-v1-ApplicationVersionInfoResponse)
     - [BackupRequest](#secrets-v1-BackupRequest)
     - [BackupResponse](#secrets-v1-BackupResponse)
     - [CreateSecretRequest](#secrets-v1-CreateSecretRequest)
@@ -31,6 +34,48 @@
 <p align="right"><a href="#top">Top</a></p>
 
 ## secrets/v1/api.proto
+
+
+
+<a name="secrets-v1-ApplicationVersionInfo"></a>
+
+### ApplicationVersionInfo
+Provides information about the application version.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| git_version | [string](#string) |  | A string representing the tag, build date, and commit SHA. |
+| go_version | [string](#string) |  | A string representing the Go version used to build the application. |
+| platform | [string](#string) |  | The platform the application was built for. |
+
+
+
+
+
+
+<a name="secrets-v1-ApplicationVersionInfoRequest"></a>
+
+### ApplicationVersionInfoRequest
+Request message for `secrets.v1.Kv2Service/ApplicationVersionInfo`
+
+
+
+
+
+
+<a name="secrets-v1-ApplicationVersionInfoResponse"></a>
+
+### ApplicationVersionInfoResponse
+Response message for `secrets.v1.Kv2Service/ApplicationVersionInfo`
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| info | [ApplicationVersionInfo](#secrets-v1-ApplicationVersionInfo) |  |  |
+
+
+
 
 
 
@@ -203,7 +248,7 @@ Request message for `secrets.v1.Kv2Service/RevertSecret`.
 <a name="secrets-v1-Secret"></a>
 
 ### Secret
-Secret represents a single secret version.
+Represents a single secret version.
 
 
 | Field | Type | Label | Description |
@@ -220,7 +265,7 @@ Secret represents a single secret version.
 <a name="secrets-v1-SecretMetadata"></a>
 
 ### SecretMetadata
-SecretMetadata represents a secret and all its versions.
+Represents a secret and all its versions.
 
 
 | Field | Type | Label | Description |
@@ -284,6 +329,7 @@ The Kv2 service provides an encrypted key-value store with versioning and backup
 | RevertSecret | [RevertSecretRequest](#secrets-v1-RevertSecretRequest) | [RevertSecretResponse](#secrets-v1-RevertSecretResponse) | Revert a secret to a previous version. |
 | ListSecrets | [ListSecretsRequest](#secrets-v1-ListSecretsRequest) | [ListSecretsResponse](#secrets-v1-ListSecretsResponse) | List all available secrets. |
 | Backup | [BackupRequest](#secrets-v1-BackupRequest) | [BackupResponse](#secrets-v1-BackupResponse) | Backup the secrets database. |
+| ApplicationVersionInfo | [ApplicationVersionInfoRequest](#secrets-v1-ApplicationVersionInfoRequest) | [ApplicationVersionInfoResponse](#secrets-v1-ApplicationVersionInfoResponse) | Provides information about the application version. |
 
 
 
