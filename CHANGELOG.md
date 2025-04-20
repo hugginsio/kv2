@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.6](https://github.com/hugginsio/kv2/compare/v0.11.5...v0.11.6) (2025-04-20)
+
+
+### Bug Fixes
+
+* goreleaser tap, add missing CLI docs ([#59](https://github.com/hugginsio/kv2/issues/59)) ([da9c2ee](https://github.com/hugginsio/kv2/commit/da9c2eefe3a12a93d5849859ece8e650871ee9ab))
+
 ## [0.11.5](https://github.com/hugginsio/kv2/compare/v0.11.4...v0.11.5) (2025-04-20)
 
 
