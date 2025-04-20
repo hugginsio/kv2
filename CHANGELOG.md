@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.3](https://github.com/hugginsio/kv2/compare/v0.11.2...v0.11.3) (2025-04-20)
+
+
+### Bug Fixes
+
+* use app token for release automation ([#53](https://github.com/hugginsio/kv2/issues/53)) ([8b9dc22](https://github.com/hugginsio/kv2/commit/8b9dc22010107aed0644740e19e147c2205de448))
+
 ## [0.11.2](https://github.com/hugginsio/kv2/compare/v0.11.1...v0.11.2) (2025-04-20)
 
 
