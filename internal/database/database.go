@@ -4,6 +4,8 @@
 package database
 
 import (
+	"time"
+
 	secretsv1 "git.huggins.io/kv2/api/secrets/v1"
 )
 
@@ -21,14 +23,31 @@ type Configuration struct {
 	Dsn string
 }
 
-type SecretRecord struct {
-	ID  uint
-	Key string
+// Secret is a collection of Versions uniquely identified by a key. Only one version can be active at a time.
+type Secret struct {
+	ID        uint
+	Key       string    // the name uniquely identifying the string
+	Active    uint      // the currently active Version of the Secret
+	Versions  []Version // all versions of the provided secret
+	CreatedAt time.Time // the time the Secret was created
+	UpdatedAt time.Time // the time the Secret was last updated
+	CreatedBy string    // the peer who created the Secret
+	UpdatedBy string    // the peer who last updated the Secret
 }
 
-type ValueRecord struct {
-	ID             uint
-	SecretRecordID uint
-	Value          []byte
-	Version        uint32
+// Version represents a single instance of a Secret value, including the Recipient who can decode it.
+type Version struct {
+	ID        uint
+	Value     []byte    // the encrypted value of the Version
+	Recipient Recipient // the Recipient of the Version
+	CreatedAt time.Time // the time the Version was created
+	CreatedBy string    // the peer who created the Version
+}
+
+// Recipient represents the identity that can decode a Secret Version.
+type Recipient struct {
+	ID        uint
+	Value     []byte // the version Recipient, typically a public key
+	CreatedAt time.Time
+	CreatedBy string // the peer who created the Recipient
 }
