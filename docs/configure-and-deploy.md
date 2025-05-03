@@ -38,7 +38,7 @@ While restore operations are automatic, backups are not. You must manually trigg
 
 The `kv2` server is available on the GitHub Container Registry, at `ghcr.io/hugginsio/kv2`. While the `:latest` tag is available, you should really use a version tag (or even better, a hash) to ensure stability and security.
 
-The best way to use `kv2` is most likely going to involve Docker Compose. Here is an example:
+Here is an example of that uses Docker Compose:
 
 ```yaml
 name: "kv2"
