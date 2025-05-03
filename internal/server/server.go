@@ -5,7 +5,9 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"connectrpc.com/connect"
 	secretsv1 "git.huggins.io/kv2/api/secrets/v1"
@@ -14,6 +16,7 @@ import (
 	"git.huggins.io/kv2/internal/crypto"
 	"git.huggins.io/kv2/internal/database"
 	"git.huggins.io/kv2/internal/version"
+	"github.com/rs/zerolog/log"
 )
 
 type Configuration struct {
@@ -43,7 +46,13 @@ func Initialize(config Configuration) *HttpServer {
 	return server
 }
 
+func auditRequest[T any](req *connect.Request[T], message string) {
+	peer := strings.Split(req.Peer().Addr, ":")[0]
+	log.Debug().Str("peer", peer).Str(USER_AGENT, req.Header().Get(USER_AGENT)).Msg(message)
+}
+
 func (h *HttpServer) CreateSecret(ctx context.Context, req *connect.Request[secretsv1.CreateSecretRequest]) (*connect.Response[secretsv1.CreateSecretResponse], error) {
+	auditRequest(req, fmt.Sprintf("creating %s", req.Msg.Key))
 	if err := h.database.Create(req.Msg); err != nil {
 		// TODO: error handling?
 		return nil, connect.NewError(connect.CodeInternal, err)
@@ -57,6 +66,7 @@ func (h *HttpServer) CreateSecret(ctx context.Context, req *connect.Request[secr
 }
 
 func (h *HttpServer) GetSecret(ctx context.Context, req *connect.Request[secretsv1.GetSecretRequest]) (*connect.Response[secretsv1.GetSecretResponse], error) {
+	auditRequest(req, fmt.Sprintf("retrieving %s", req.Msg.Key))
 	res, err := h.database.Read(req.Msg)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
@@ -66,6 +76,7 @@ func (h *HttpServer) GetSecret(ctx context.Context, req *connect.Request[secrets
 }
 
 func (h *HttpServer) UpdateSecret(ctx context.Context, req *connect.Request[secretsv1.UpdateSecretRequest]) (*connect.Response[secretsv1.UpdateSecretResponse], error) {
+	auditRequest(req, fmt.Sprintf("updating %s", req.Msg.Key))
 	if res, err := h.database.Update(req.Msg); err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	} else {
@@ -74,6 +85,7 @@ func (h *HttpServer) UpdateSecret(ctx context.Context, req *connect.Request[secr
 }
 
 func (h *HttpServer) DeleteSecret(ctx context.Context, req *connect.Request[secretsv1.DeleteSecretRequest]) (*connect.Response[secretsv1.DeleteSecretResponse], error) {
+	auditRequest(req, fmt.Sprintf("deleting %s", req.Msg.Key))
 	if err := h.database.Delete(req.Msg); err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
@@ -82,6 +94,7 @@ func (h *HttpServer) DeleteSecret(ctx context.Context, req *connect.Request[secr
 }
 
 func (h *HttpServer) RevertSecret(ctx context.Context, req *connect.Request[secretsv1.RevertSecretRequest]) (*connect.Response[secretsv1.RevertSecretResponse], error) {
+	auditRequest(req, fmt.Sprintf("reverting %s", req.Msg.Key))
 	if res, err := h.database.Revert(req.Msg); err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	} else {
@@ -90,6 +103,7 @@ func (h *HttpServer) RevertSecret(ctx context.Context, req *connect.Request[secr
 }
 
 func (h *HttpServer) ListSecrets(ctx context.Context, req *connect.Request[secretsv1.ListSecretsRequest]) (*connect.Response[secretsv1.ListSecretsResponse], error) {
+	auditRequest(req, "ListSecrets")
 	res, err := h.database.List()
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
@@ -104,6 +118,7 @@ func (h *HttpServer) Backup(ctx context.Context, req *connect.Request[secretsv1.
 		backupName = "kv2.db"
 	}
 
+	auditRequest(req, fmt.Sprintf("backing up to %s", *req.Msg.Name))
 	if err := h.backup.Backup(backupName); err != nil {
 		return nil, connect.NewError(connect.CodeInternal, err)
 	}
@@ -112,5 +127,6 @@ func (h *HttpServer) Backup(ctx context.Context, req *connect.Request[secretsv1.
 }
 
 func (h *HttpServer) ApplicationVersionInfo(ctx context.Context, req *connect.Request[secretsv1.ApplicationVersionInfoRequest]) (*connect.Response[secretsv1.ApplicationVersionInfoResponse], error) {
+	auditRequest(req, "version info requested")
 	return &connect.Response[secretsv1.ApplicationVersionInfoResponse]{Msg: &secretsv1.ApplicationVersionInfoResponse{Info: version.VersionInfo()}}, nil
 }
