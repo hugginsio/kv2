@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0](https://github.com/hugginsio/kv2/compare/v0.11.6...v1.0.0) (2025-05-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* revise docs for 1.0 ([#63](https://github.com/hugginsio/kv2/issues/63))
+
+### Features
+
+* add audit logs to server ([#61](https://github.com/hugginsio/kv2/issues/61)) ([e763ee9](https://github.com/hugginsio/kv2/commit/e763ee910404df2b31764638ae4b0abaee3e8cac)), closes [#39](https://github.com/hugginsio/kv2/issues/39)
+* revise docs for 1.0 ([#63](https://github.com/hugginsio/kv2/issues/63)) ([3893b93](https://github.com/hugginsio/kv2/commit/3893b93658ec6b73c8abfc7f8382b796179f8830))
+
 ## [0.11.6](https://github.com/hugginsio/kv2/compare/v0.11.5...v0.11.6) (2025-04-20)
 
 
