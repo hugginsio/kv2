@@ -1,9 +1,6 @@
 # 🔐 kv2
 
-> [!WARNING]
-> `kv2` is still v0. Breaking changes are expected.
-
-`kv2` is a key-value key vault built for homelab secrets management. This repository contains the server and client components, as well as the reference CLI implementation.
+`kv2` is an encrypted & versioned secrets manager for tailnets, built for homelab secrets management. This repository contains the server and client components, as well as the reference client implementation in the form of a CLI.
 
 ## ✨ Features
 
