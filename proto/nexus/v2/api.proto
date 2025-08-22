@@ -1,0 +1,7 @@
+// Copyright (c) Kyle Huggins
+// SPDX-License-Identifier: BSD-3-Clause
+
+syntax = "proto3";
+
+// Package nexus provides APIs for managing encrypted secrets and their metadata.
+package nexus.v2;

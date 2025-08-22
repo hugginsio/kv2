@@ -6,7 +6,7 @@ managed:
   enabled: true
   override:
     - file_option: go_package_prefix
-      value: git.huggins.io/kv2/api
+      value: github.com/hugginsio/kv2/api
 plugins:
   - remote: buf.build/protocolbuffers/go
     out: api
