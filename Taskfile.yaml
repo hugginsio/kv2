@@ -4,5 +4,7 @@
 version: 3
 
 tasks:
-  default:
-    cmd: ""
+  codegen:
+    desc: Run code generation
+    cmds:
+      - "buf generate --clean"
