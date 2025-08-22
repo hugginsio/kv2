@@ -1,8 +1,0 @@
-{
-  "name": "kv2",
-  "engineVersion": "v0.18.3",
-  "sdk": {
-    "source": "go"
-  },
-  "source": "dagger"
-}
