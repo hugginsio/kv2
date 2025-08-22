@@ -19,5 +19,3 @@ plugins:
     opt: markdown,protocol.md
 inputs:
   - directory: proto
-    exclude_paths:
-      - secrets
