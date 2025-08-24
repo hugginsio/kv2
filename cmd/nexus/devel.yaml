@@ -1,0 +1,3 @@
+persistence:
+  type: sqlite
+  endpoint: "./tmp.db"

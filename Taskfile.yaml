@@ -8,3 +8,7 @@ tasks:
     desc: Run code generation
     cmds:
       - "buf generate --clean"
+  dev:nexus:
+    desc: Run nexus in development mode
+    dir: "./cmd/nexus/"
+    cmd: "go run ."

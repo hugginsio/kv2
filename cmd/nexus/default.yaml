@@ -1,0 +1,11 @@
+# huggins.dev/kv2
+# Default configuration for kv2's Nexus component.
+
+persistence:
+  enabled: true
+  type: sqlite
+  endpoint: "/data/kv2-nexus.db"
+
+tailnet:
+  enabled: true
+  authkey-var: TS_AUTHKEY
