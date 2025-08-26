@@ -11,4 +11,6 @@ tasks:
   dev:nexus:
     desc: Run nexus in development mode
     dir: "./cmd/nexus/"
+    env:
+      KV2_DEVEL: "true"
     cmd: "go run ."

@@ -6,15 +6,19 @@ package main
 import (
 	"log/slog"
 	"os"
+	"path/filepath"
 
 	goversion "github.com/caarlos0/go-version"
 	"github.com/hugginsio/kv2/internal/discovery"
+	"github.com/hugginsio/kv2/internal/yaml"
 )
 
 func main() {
-	slog.Info("nexus is starting", "version", goversion.GetVersionInfo().GitVersion)
+	if discovery.IsDevel() {
+		slog.SetLogLoggerLevel(slog.LevelDebug)
+	}
 
-	// TODO: check for KV2_DEVEL environment variable and enable debug logs if so
+	slog.Info("nexus is starting", "version", goversion.GetVersionInfo().GitVersion)
 
 	configurationParent := "/app/"
 	if !discovery.IsContainerized() {
@@ -26,11 +30,40 @@ func main() {
 		configurationParent = wd
 	}
 
-	slog.Debug("loading configuration", "path", configurationParent)
+	var configuration Config
+	configurationFile := "config.yaml"
+	if discovery.IsDevel() {
+		configurationFile = "devel.yaml"
+	}
 
-	// TODO: environment discovery
-	// TODO: load config
-	// TODO: validate config
+	configurationPath := filepath.Join(configurationParent, configurationFile)
+
+	slog.Debug("loading configuration", "path", configurationPath)
+
+	if err := yaml.LoadYamlBytes(DefaultConfigYAML, &configuration); err != nil {
+		panic(err)
+	}
+
+	slog.Info("current config", "str", configuration)
+
+	if err := yaml.LoadYaml(configurationPath, &configuration); err != nil {
+		// TODO: better error handling
+		panic(err)
+	}
+
+	slog.Info("loaded config", "str", configuration)
+
+	if errs := Validate(&configuration); len(errs) > 0 {
+		// TODO: print all errors one at a time
+		for _, err := range errs {
+			slog.Error("configuration validation error", "error", err)
+		}
+
+		panic(errs)
+	}
+
+	slog.Debug("configuration loaded & validated")
+
 	// TODO: database init
 	// TODO: setup tsnet connection if needed
 	// TODO: setup web service

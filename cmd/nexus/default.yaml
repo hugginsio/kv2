@@ -4,8 +4,20 @@
 persistence:
   enabled: true
   type: sqlite
-  endpoint: "/data/kv2-nexus.db"
+  endpoint: "/data/kv2.db"
+  backup:
+    enabled: false
+    schedule: ""
+    endpoint: ""
+  restore:
+    enabled: false
 
 tailnet:
   enabled: true
   authkey-var: TS_AUTHKEY
+  authkey-kms: ""
+  hostname: kv2-nexus
+  tls: false
+
+kms:
+  enabled: false

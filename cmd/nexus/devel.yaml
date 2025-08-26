@@ -1,3 +1,6 @@
 persistence:
   type: sqlite
   endpoint: "./tmp.db"
+
+tailnet:
+  enabled: false
