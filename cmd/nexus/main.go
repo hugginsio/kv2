@@ -41,30 +41,37 @@ func main() {
 	slog.Debug("loading configuration", "path", configurationPath)
 
 	if err := yaml.LoadYamlBytes(DefaultConfigYAML, &configuration); err != nil {
+		// TODO: better error handling
 		panic(err)
 	}
-
-	slog.Info("current config", "str", configuration)
 
 	if err := yaml.LoadYaml(configurationPath, &configuration); err != nil {
 		// TODO: better error handling
 		panic(err)
 	}
 
-	slog.Info("loaded config", "str", configuration)
-
 	if errs := Validate(&configuration); len(errs) > 0 {
-		// TODO: print all errors one at a time
 		for _, err := range errs {
 			slog.Error("configuration validation error", "error", err)
 		}
 
+		// TODO: better error handling
 		panic(errs)
 	}
 
-	slog.Debug("configuration loaded & validated")
+	if !filepath.IsAbs(configuration.Persistence.Endpoint) {
+		configuration.Persistence.Endpoint = filepath.Join(configurationParent, configuration.Persistence.Endpoint)
+	}
+
+	// TODO: restore from backup if enabled and present
+
+	slog.Debug("loading database", "endpoint", configuration.Persistence.Endpoint)
 
 	// TODO: database init
-	// TODO: setup tsnet connection if needed
+
+	// TODO: setup tsnet connection if enabled
+
+	// TODO: configure backup cronjob if enabled
+
 	// TODO: setup web service
 }

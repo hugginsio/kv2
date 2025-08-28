@@ -19,19 +19,20 @@ type Config struct {
 }
 
 type PersistenceConfig struct {
-	Enabled  bool          `yaml:"enabled"`  // Toggle data persistence. If false (for development purposes), uses in-memory SQLite.
-	Type     string        `yaml:"type"`     // Specify backend type, e.g. `sqlite`.
-	Endpoint string        `yaml:"endpoint"` // Specify data endpoint, e.g. `/data/kv2.db`.
-	Backup   BackupConfig  `yaml:"backup"`   // Configure automatic backups.
-	Restore  RestoreConfig `yaml:"restore"`  // Configure automatic restore.
+	Enabled     bool          `yaml:"enabled"`      // Toggle data persistence. If false (for development purposes), uses in-memory SQLite.
+	Type        string        `yaml:"type"`         // Specify backend type, e.g. `sqlite`.
+	Endpoint    string        `yaml:"endpoint"`     // Specify data endpoint, e.g. `/data/kv2.db`.
+	Backup      BackupConfig  `yaml:"backup"`       // Configure automatic backups.
+	Restore     RestoreConfig `yaml:"restore"`      // Configure automatic restore.
+	MaxVersions int           `yaml:"max-versions"` // Maximum number of versions to keep for each secret.
 }
 
 type TailnetConfig struct {
-	Enabled    bool   `yaml:"enabled"`     // Toggle tailnet connectivity.
-	AuthkeyVar string `yaml:"authkey-var"` // Specify the environment variable name holding the authorization key.
-	AuthkeyKms string `yaml:"authkey-kms"` // Specify the KMS identifier for the authorization key, e.g. `gsm://projects/1234/secrets/ts-authkey`.
-	Hostname   string `yaml:"hostname"`    // Specify the hostname for tailnet connectivity.
-	TLS        bool   `yaml:"tls"`         // Toggle TLS requirement for server.
+	Enabled  bool   `yaml:"enabled"`  // Toggle tailnet connectivity.
+	KeyVar   string `yaml:"key-var"`  // Specify the environment variable name holding the authorization key.
+	KeyKms   string `yaml:"key-kms"`  // Specify the KMS identifier for the authorization key, e.g. `gsm://projects/1234/secrets/ts-authkey`.
+	Hostname string `yaml:"hostname"` // Specify the hostname for tailnet connectivity.
+	TLS      bool   `yaml:"tls"`      // Toggle TLS requirement for server.
 }
 
 type BackupConfig struct {
@@ -74,7 +75,7 @@ func Validate(config *Config) []error {
 	}
 
 	if config.Tailnet.Enabled {
-		if config.Tailnet.AuthkeyVar == "" && config.Tailnet.AuthkeyKms == "" {
+		if config.Tailnet.KeyVar == "" && config.Tailnet.KeyKms == "" {
 			results = append(results, errors.New("tailnet.authkey-var or tailnet.authkey-kms must be specified"))
 		}
 

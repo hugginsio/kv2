@@ -11,11 +11,12 @@ persistence:
     endpoint: ""
   restore:
     enabled: false
+  max-versions: 9
 
 tailnet:
   enabled: true
-  authkey-var: TS_AUTHKEY
-  authkey-kms: ""
+  key-var: TS_AUTHKEY
+  key-kms: ""
   hostname: kv2-nexus
   tls: false
 
