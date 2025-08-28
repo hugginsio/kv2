@@ -4,11 +4,13 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
 
 	goversion "github.com/caarlos0/go-version"
+	"github.com/hugginsio/kv2/internal/data"
 	"github.com/hugginsio/kv2/internal/discovery"
 	"github.com/hugginsio/kv2/internal/yaml"
 )
@@ -68,6 +70,13 @@ func main() {
 	slog.Debug("loading database", "endpoint", configuration.Persistence.Endpoint)
 
 	// TODO: database init
+	_, err := data.NewSqliteBackend(&data.SqliteConfiguration{Path: configuration.Persistence.Endpoint})
+	if err != nil {
+
+		// TODO: better error handling
+		fmt.Println(err)
+		panic(err)
+	}
 
 	// TODO: setup tsnet connection if enabled
 

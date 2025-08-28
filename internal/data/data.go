@@ -12,23 +12,23 @@ type CreatedSignature struct {
 }
 
 type EncryptionKey struct {
-	ID        uint   `gorm:"primaryKey;autoIncrement"` // Unique numeric identifier for the EncryptionKey. PK.
-	PublicKey string `gorm:"not null"`                 // The public key text.
+	ID        uint   `gorm:"primaryKey;autoIncrement;uniqueIndex"` // Unique numeric identifier for the EncryptionKey. PK.
+	PublicKey string `gorm:"not null"`                             // The public key text.
 	CreatedSignature
 }
 
 type Secret struct {
-	ID            uint            `gorm:"primaryKey;autoIncrement"` // Unique numeric identifier for the Secret. PK.
-	Title         string          `gorm:"not null;unique"`          // Unique title of the Secret.
-	SecretVersion []SecretVersion `gorm:"foreignKey:Parent"`        // All versions of the Secret.
+	ID            uint            `gorm:"primaryKey;autoIncrement;"`   // Unique numeric identifier for the Secret. PK.
+	Title         string          `gorm:"not null;unique;uniqueIndex"` // Unique title of the Secret.
+	SecretVersion []SecretVersion `gorm:"foreignKey:Parent"`           // All versions of the Secret.
 	CreatedSignature
 }
 
 type SecretVersion struct {
-	ID      uint   `gorm:"primaryKey;autoIncrement"` // Unique numeric identifier for the SecretVersion. PK.
-	Parent  uint   `gorm:"not null;foreignKey"`      // The ID of the parent Secret.
-	Version uint   `gorm:"not null"`                 // The version of the Secret.
-	Content []byte `gorm:"not null"`                 // The encrypted contents of the SecretVersion.
+	ID      uint   `gorm:"primaryKey;autoIncrement"`        // Unique numeric identifier for the SecretVersion. PK.
+	Parent  uint   `gorm:"not null;foreignKey;uniqueIndex"` // The ID of the parent Secret.
+	Version uint   `gorm:"not null"`                        // The version of the Secret.
+	Content []byte `gorm:"not null"`                        // The encrypted contents of the SecretVersion.
 	CreatedSignature
 }
 
