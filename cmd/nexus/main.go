@@ -6,6 +6,8 @@ package main
 import (
 	"fmt"
 	"log/slog"
+	"net"
+	"net/http"
 	"os"
 	"path/filepath"
 
@@ -70,17 +72,35 @@ func main() {
 	slog.Debug("loading database", "endpoint", configuration.Persistence.Endpoint)
 
 	// TODO: database init
-	_, err := data.NewSqliteBackend(&data.SqliteConfiguration{Path: configuration.Persistence.Endpoint})
+	backend, err := data.NewSqliteBackend(&data.SqliteConfiguration{Path: configuration.Persistence.Endpoint})
 	if err != nil {
-
 		// TODO: better error handling
 		fmt.Println(err)
 		panic(err)
 	}
 
-	// TODO: setup tsnet connection if enabled
-
 	// TODO: configure backup cronjob if enabled
 
-	// TODO: setup web service
+	port := "8080"
+
+	// TODO: setup tsnet connection if enabled
+	if configuration.Tailnet.Enabled && configuration.Tailnet.TLS {
+		port = "443"
+	}
+
+	slog.Info("API listening on", "port", port)
+	mux := http.NewServeMux()
+	handler := NewConnectHandler(backend, mux)
+	ln, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		// TODO: better error handling
+		panic(err)
+	}
+
+	ServeHealthEndpoint()
+
+	if err := http.Serve(ln, handler); err != nil {
+		// TODO: better error handling
+		panic(err)
+	}
 }

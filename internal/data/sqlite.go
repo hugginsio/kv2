@@ -29,3 +29,15 @@ func NewSqliteBackend(config *SqliteConfiguration) (*SqliteBackend, error) {
 
 	return &SqliteBackend{sql: db}, nil
 }
+
+func (s *SqliteBackend) CreateSecret(*Secret) (*Secret, error) {
+	panic("unimplemented")
+}
+
+func (s *SqliteBackend) GetSecretVersions(string) (*Secret, error) {
+	panic("unimplemented")
+}
+
+func (s *SqliteBackend) UpdateSecret(*SecretVersion) (*SecretVersion, error) {
+	panic("unimplemented")
+}
