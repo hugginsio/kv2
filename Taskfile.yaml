@@ -14,3 +14,8 @@ tasks:
     env:
       KV2_DEVEL: "true"
     cmd: "go run ."
+  lint:
+    desc: Lint all files
+    cmds:
+      - "buf lint"
+      - "golangci-lint run"

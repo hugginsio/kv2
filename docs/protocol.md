@@ -4,6 +4,13 @@
 ## Table of Contents
 
 - [nexus/v2/api.proto](#nexus_v2_api-proto)
+    - [CreateSecretRequest](#nexus-v2-CreateSecretRequest)
+    - [CreateSecretResponse](#nexus-v2-CreateSecretResponse)
+    - [UpdateSecretRequest](#nexus-v2-UpdateSecretRequest)
+    - [UpdateSecretResponse](#nexus-v2-UpdateSecretResponse)
+
+    - [Kv2NexusService](#nexus-v2-Kv2NexusService)
+
 - [relay/v2/api.proto](#relay_v2_api-proto)
 - [Scalar Value Types](#scalar-value-types)
 
@@ -16,10 +23,82 @@
 
 
 
+<a name="nexus-v2-CreateSecretRequest"></a>
+
+### CreateSecretRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| title | [string](#string) |  |  |
+| content | [bytes](#bytes) |  |  |
+| public_key | [string](#string) |  |  |
+| user | [string](#string) |  |  |
 
 
 
 
+
+
+<a name="nexus-v2-CreateSecretResponse"></a>
+
+### CreateSecretResponse
+
+
+
+
+
+
+
+<a name="nexus-v2-UpdateSecretRequest"></a>
+
+### UpdateSecretRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| title | [string](#string) |  |  |
+| content | [bytes](#bytes) |  |  |
+| public_key | [string](#string) |  |  |
+| user | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="nexus-v2-UpdateSecretResponse"></a>
+
+### UpdateSecretResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| version | [uint32](#uint32) |  |  |
+
+
+
+
+
+
+
+
+
+
+
+
+<a name="nexus-v2-Kv2NexusService"></a>
+
+### Kv2NexusService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| CreateSecret | [CreateSecretRequest](#nexus-v2-CreateSecretRequest) | [CreateSecretResponse](#nexus-v2-CreateSecretResponse) | Create a new secret. |
+| UpdateSecret | [UpdateSecretRequest](#nexus-v2-UpdateSecretRequest) | [UpdateSecretResponse](#nexus-v2-UpdateSecretResponse) | Update an existing secret. |
 
 
 

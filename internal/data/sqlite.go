@@ -4,8 +4,6 @@
 package data
 
 import (
-	"log/slog"
-
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
@@ -20,8 +18,6 @@ type SqliteConfiguration struct {
 }
 
 func NewSqliteBackend(config *SqliteConfiguration) (*SqliteBackend, error) {
-	slog.Debug("opening database", "path", config.Path)
-
 	db, err := gorm.Open(sqlite.Open(config.Path), &gorm.Config{})
 	if err != nil {
 		return nil, err

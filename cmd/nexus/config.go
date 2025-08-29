@@ -53,6 +53,7 @@ func Validate(config *Config) []error {
 	var results []error
 	if config == nil {
 		results = append(results, errors.New("config cannot be nil"))
+		return results
 	}
 
 	if config.Persistence.Enabled {

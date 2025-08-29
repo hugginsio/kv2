@@ -3,5 +3,34 @@
 
 syntax = "proto3";
 
-// Package nexus provides APIs for managing encrypted secrets and their metadata.
+// Package nexus provides APIs for managing encrypted secrets and their
+// metadata. Nexus stores provided values as-is, and the client should
+// encrypt the content prior to making the request.
 package nexus.v2;
+
+message CreateSecretRequest {
+  string title = 1;
+  bytes content = 2;
+  string public_key = 3;
+  string user = 4;
+}
+
+message CreateSecretResponse {}
+
+// TODO: get secret details request
+
+message UpdateSecretRequest {
+  string title = 1;
+  bytes content = 2;
+  string public_key = 3;
+  string user = 4;
+}
+
+message UpdateSecretResponse {
+  uint32 version = 1;
+}
+
+service Kv2NexusService {
+  rpc CreateSecret(CreateSecretRequest) returns (CreateSecretResponse); // Create a new secret.
+  rpc UpdateSecret(UpdateSecretRequest) returns (UpdateSecretResponse); // Update an existing secret.
+}

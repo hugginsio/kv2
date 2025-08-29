@@ -7,7 +7,9 @@
 // 	protoc        (unknown)
 // source: nexus/v2/api.proto
 
-// Package nexus provides APIs for managing encrypted secrets and their metadata.
+// Package nexus provides APIs for managing encrypted secrets and their
+// metadata. Nexus stores provided values as-is, and the client should
+// encrypt the content prior to making the request.
 
 package nexusv2
 
@@ -15,6 +17,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -25,17 +28,273 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type CreateSecretRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Content       []byte                 `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
+	PublicKey     string                 `protobuf:"bytes,3,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
+	User          string                 `protobuf:"bytes,4,opt,name=user,proto3" json:"user,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateSecretRequest) Reset() {
+	*x = CreateSecretRequest{}
+	mi := &file_nexus_v2_api_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateSecretRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSecretRequest) ProtoMessage() {}
+
+func (x *CreateSecretRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_nexus_v2_api_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSecretRequest.ProtoReflect.Descriptor instead.
+func (*CreateSecretRequest) Descriptor() ([]byte, []int) {
+	return file_nexus_v2_api_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *CreateSecretRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *CreateSecretRequest) GetContent() []byte {
+	if x != nil {
+		return x.Content
+	}
+	return nil
+}
+
+func (x *CreateSecretRequest) GetPublicKey() string {
+	if x != nil {
+		return x.PublicKey
+	}
+	return ""
+}
+
+func (x *CreateSecretRequest) GetUser() string {
+	if x != nil {
+		return x.User
+	}
+	return ""
+}
+
+type CreateSecretResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateSecretResponse) Reset() {
+	*x = CreateSecretResponse{}
+	mi := &file_nexus_v2_api_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateSecretResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateSecretResponse) ProtoMessage() {}
+
+func (x *CreateSecretResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_nexus_v2_api_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateSecretResponse.ProtoReflect.Descriptor instead.
+func (*CreateSecretResponse) Descriptor() ([]byte, []int) {
+	return file_nexus_v2_api_proto_rawDescGZIP(), []int{1}
+}
+
+type UpdateSecretRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Content       []byte                 `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
+	PublicKey     string                 `protobuf:"bytes,3,opt,name=public_key,json=publicKey,proto3" json:"public_key,omitempty"`
+	User          string                 `protobuf:"bytes,4,opt,name=user,proto3" json:"user,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateSecretRequest) Reset() {
+	*x = UpdateSecretRequest{}
+	mi := &file_nexus_v2_api_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateSecretRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateSecretRequest) ProtoMessage() {}
+
+func (x *UpdateSecretRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_nexus_v2_api_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateSecretRequest.ProtoReflect.Descriptor instead.
+func (*UpdateSecretRequest) Descriptor() ([]byte, []int) {
+	return file_nexus_v2_api_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *UpdateSecretRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *UpdateSecretRequest) GetContent() []byte {
+	if x != nil {
+		return x.Content
+	}
+	return nil
+}
+
+func (x *UpdateSecretRequest) GetPublicKey() string {
+	if x != nil {
+		return x.PublicKey
+	}
+	return ""
+}
+
+func (x *UpdateSecretRequest) GetUser() string {
+	if x != nil {
+		return x.User
+	}
+	return ""
+}
+
+type UpdateSecretResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Version       uint32                 `protobuf:"varint,1,opt,name=version,proto3" json:"version,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateSecretResponse) Reset() {
+	*x = UpdateSecretResponse{}
+	mi := &file_nexus_v2_api_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateSecretResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateSecretResponse) ProtoMessage() {}
+
+func (x *UpdateSecretResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_nexus_v2_api_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateSecretResponse.ProtoReflect.Descriptor instead.
+func (*UpdateSecretResponse) Descriptor() ([]byte, []int) {
+	return file_nexus_v2_api_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *UpdateSecretResponse) GetVersion() uint32 {
+	if x != nil {
+		return x.Version
+	}
+	return 0
+}
+
 var File_nexus_v2_api_proto protoreflect.FileDescriptor
 
 const file_nexus_v2_api_proto_rawDesc = "" +
 	"\n" +
-	"\x12nexus/v2/api.proto\x12\bnexus.v2B\x88\x01\n" +
+	"\x12nexus/v2/api.proto\x12\bnexus.v2\"x\n" +
+	"\x13CreateSecretRequest\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\x12\x18\n" +
+	"\acontent\x18\x02 \x01(\fR\acontent\x12\x1d\n" +
+	"\n" +
+	"public_key\x18\x03 \x01(\tR\tpublicKey\x12\x12\n" +
+	"\x04user\x18\x04 \x01(\tR\x04user\"\x16\n" +
+	"\x14CreateSecretResponse\"x\n" +
+	"\x13UpdateSecretRequest\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\x12\x18\n" +
+	"\acontent\x18\x02 \x01(\fR\acontent\x12\x1d\n" +
+	"\n" +
+	"public_key\x18\x03 \x01(\tR\tpublicKey\x12\x12\n" +
+	"\x04user\x18\x04 \x01(\tR\x04user\"0\n" +
+	"\x14UpdateSecretResponse\x12\x18\n" +
+	"\aversion\x18\x01 \x01(\rR\aversion2\xaf\x01\n" +
+	"\x0fKv2NexusService\x12M\n" +
+	"\fCreateSecret\x12\x1d.nexus.v2.CreateSecretRequest\x1a\x1e.nexus.v2.CreateSecretResponse\x12M\n" +
+	"\fUpdateSecret\x12\x1d.nexus.v2.UpdateSecretRequest\x1a\x1e.nexus.v2.UpdateSecretResponseB\x88\x01\n" +
 	"\fcom.nexus.v2B\bApiProtoP\x01Z-github.com/hugginsio/kv2/api/nexus/v2;nexusv2\xa2\x02\x03NXX\xaa\x02\bNexus.V2\xca\x02\bNexus\\V2\xe2\x02\x14Nexus\\V2\\GPBMetadata\xea\x02\tNexus::V2b\x06proto3"
 
-var file_nexus_v2_api_proto_goTypes = []any{}
+var (
+	file_nexus_v2_api_proto_rawDescOnce sync.Once
+	file_nexus_v2_api_proto_rawDescData []byte
+)
+
+func file_nexus_v2_api_proto_rawDescGZIP() []byte {
+	file_nexus_v2_api_proto_rawDescOnce.Do(func() {
+		file_nexus_v2_api_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_nexus_v2_api_proto_rawDesc), len(file_nexus_v2_api_proto_rawDesc)))
+	})
+	return file_nexus_v2_api_proto_rawDescData
+}
+
+var file_nexus_v2_api_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_nexus_v2_api_proto_goTypes = []any{
+	(*CreateSecretRequest)(nil),  // 0: nexus.v2.CreateSecretRequest
+	(*CreateSecretResponse)(nil), // 1: nexus.v2.CreateSecretResponse
+	(*UpdateSecretRequest)(nil),  // 2: nexus.v2.UpdateSecretRequest
+	(*UpdateSecretResponse)(nil), // 3: nexus.v2.UpdateSecretResponse
+}
 var file_nexus_v2_api_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
+	0, // 0: nexus.v2.Kv2NexusService.CreateSecret:input_type -> nexus.v2.CreateSecretRequest
+	2, // 1: nexus.v2.Kv2NexusService.UpdateSecret:input_type -> nexus.v2.UpdateSecretRequest
+	1, // 2: nexus.v2.Kv2NexusService.CreateSecret:output_type -> nexus.v2.CreateSecretResponse
+	3, // 3: nexus.v2.Kv2NexusService.UpdateSecret:output_type -> nexus.v2.UpdateSecretResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -52,12 +311,13 @@ func file_nexus_v2_api_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_nexus_v2_api_proto_rawDesc), len(file_nexus_v2_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   4,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
 		GoTypes:           file_nexus_v2_api_proto_goTypes,
 		DependencyIndexes: file_nexus_v2_api_proto_depIdxs,
+		MessageInfos:      file_nexus_v2_api_proto_msgTypes,
 	}.Build()
 	File_nexus_v2_api_proto = out.File
 	file_nexus_v2_api_proto_goTypes = nil
