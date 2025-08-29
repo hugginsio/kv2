@@ -18,11 +18,6 @@ type ServerHandler struct {
 	mux     *http.ServeMux
 }
 
-// ServeHTTP implements http.Handler.
-func (c *ServerHandler) ServeHTTP(http.ResponseWriter, *http.Request) {
-	panic("unimplemented")
-}
-
 func NewConnectHandler(backend data.Backend, mux *http.ServeMux) *ServerHandler {
 	server := &ServerHandler{
 		backend: backend,
@@ -35,9 +30,9 @@ func NewConnectHandler(backend data.Backend, mux *http.ServeMux) *ServerHandler 
 }
 
 func (c *ServerHandler) CreateSecret(context.Context, *connect.Request[nexusv2.CreateSecretRequest]) (*connect.Response[nexusv2.CreateSecretResponse], error) {
-	panic("unimplemented")
+	return connect.NewResponse(&nexusv2.CreateSecretResponse{}), nil
 }
 
 func (c *ServerHandler) UpdateSecret(context.Context, *connect.Request[nexusv2.UpdateSecretRequest]) (*connect.Response[nexusv2.UpdateSecretResponse], error) {
-	panic("unimplemented")
+	return connect.NewResponse(&nexusv2.UpdateSecretResponse{}), nil
 }

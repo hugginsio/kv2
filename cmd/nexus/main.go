@@ -15,6 +15,8 @@ import (
 	"github.com/hugginsio/kv2/internal/data"
 	"github.com/hugginsio/kv2/internal/discovery"
 	"github.com/hugginsio/kv2/internal/yaml"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 )
 
 func main() {
@@ -90,7 +92,7 @@ func main() {
 
 	slog.Info("API listening on", "port", port)
 	mux := http.NewServeMux()
-	handler := NewConnectHandler(backend, mux)
+	NewConnectHandler(backend, mux)
 	ln, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		// TODO: better error handling
@@ -99,7 +101,7 @@ func main() {
 
 	ServeHealthEndpoint()
 
-	if err := http.Serve(ln, handler); err != nil {
+	if err := http.Serve(ln, h2c.NewHandler(mux, &http2.Server{})); err != nil {
 		// TODO: better error handling
 		panic(err)
 	}

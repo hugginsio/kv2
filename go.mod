@@ -5,6 +5,7 @@ go 1.25.0
 require (
 	connectrpc.com/connect v1.18.1
 	github.com/caarlos0/go-version v0.2.1
+	golang.org/x/net v0.43.0
 	google.golang.org/protobuf v1.36.8
 	sigs.k8s.io/yaml v1.6.0
 )
