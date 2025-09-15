@@ -6,6 +6,13 @@
 - [nexus/v2/api.proto](#nexus_v2_api-proto)
     - [CreateSecretRequest](#nexus-v2-CreateSecretRequest)
     - [CreateSecretResponse](#nexus-v2-CreateSecretResponse)
+    - [GetSecretByTitleRequest](#nexus-v2-GetSecretByTitleRequest)
+    - [GetSecretByTitleResponse](#nexus-v2-GetSecretByTitleResponse)
+    - [GetSecretVersionByTitleRequest](#nexus-v2-GetSecretVersionByTitleRequest)
+    - [GetSecretVersionByTitleResponse](#nexus-v2-GetSecretVersionByTitleResponse)
+    - [ListSecretInner](#nexus-v2-ListSecretInner)
+    - [ListSecretRequest](#nexus-v2-ListSecretRequest)
+    - [ListSecretResponse](#nexus-v2-ListSecretResponse)
     - [UpdateSecretRequest](#nexus-v2-UpdateSecretRequest)
     - [UpdateSecretResponse](#nexus-v2-UpdateSecretResponse)
 
@@ -34,7 +41,6 @@
 | title | [string](#string) |  |  |
 | content | [bytes](#bytes) |  |  |
 | public_key | [string](#string) |  |  |
-| user | [string](#string) |  |  |
 
 
 
@@ -45,6 +51,115 @@
 
 ### CreateSecretResponse
 
+
+
+
+
+
+
+<a name="nexus-v2-GetSecretByTitleRequest"></a>
+
+### GetSecretByTitleRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| title | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="nexus-v2-GetSecretByTitleResponse"></a>
+
+### GetSecretByTitleResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| versions | [uint32](#uint32) | repeated |  |
+| created_by | [string](#string) |  |  |
+| created_at | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="nexus-v2-GetSecretVersionByTitleRequest"></a>
+
+### GetSecretVersionByTitleRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| title | [string](#string) |  |  |
+| version | [uint32](#uint32) | optional |  |
+
+
+
+
+
+
+<a name="nexus-v2-GetSecretVersionByTitleResponse"></a>
+
+### GetSecretVersionByTitleResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| version | [uint32](#uint32) | optional |  |
+| content | [bytes](#bytes) |  |  |
+| created_by | [string](#string) |  |  |
+| created_at | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="nexus-v2-ListSecretInner"></a>
+
+### ListSecretInner
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| title | [string](#string) |  |  |
+| versions | [uint32](#uint32) | repeated |  |
+| created_by | [string](#string) |  |  |
+| created_at | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="nexus-v2-ListSecretRequest"></a>
+
+### ListSecretRequest
+
+
+
+
+
+
+
+<a name="nexus-v2-ListSecretResponse"></a>
+
+### ListSecretResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| secrets | [ListSecretInner](#nexus-v2-ListSecretInner) | repeated |  |
 
 
 
@@ -97,8 +212,11 @@
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
+| ListSecret | [ListSecretRequest](#nexus-v2-ListSecretRequest) | [ListSecretResponse](#nexus-v2-ListSecretResponse) | List all secrets. |
 | CreateSecret | [CreateSecretRequest](#nexus-v2-CreateSecretRequest) | [CreateSecretResponse](#nexus-v2-CreateSecretResponse) | Create a new secret. |
-| UpdateSecret | [UpdateSecretRequest](#nexus-v2-UpdateSecretRequest) | [UpdateSecretResponse](#nexus-v2-UpdateSecretResponse) | Update an existing secret. |
+| UpdateSecret | [UpdateSecretRequest](#nexus-v2-UpdateSecretRequest) | [UpdateSecretResponse](#nexus-v2-UpdateSecretResponse) | rpc GetSecretByTitle(GetSecretByTitleRequest) returns (GetSecretByTitleResponse); // Get a secret details by title. rpc GetSecretVersionByTitle(GetSecretVersionByTitleRequest) returns (GetSecretVersionByTitleResponse); // Get a particular secret version by title.
+
+Update an existing secret. |
 
 
 

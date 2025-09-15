@@ -30,14 +30,41 @@ func NewSqliteBackend(config *SqliteConfiguration) (*SqliteBackend, error) {
 	return &SqliteBackend{sql: db}, nil
 }
 
-func (s *SqliteBackend) CreateSecret(*Secret) (*Secret, error) {
+func (m *SqliteBackend) ListSecrets() ([]*Secret, error) {
+	var secrets []*Secret
+	if err := m.sql.Find(&secrets).Error; err != nil {
+		return nil, err
+	}
+
+	return secrets, nil
+}
+
+func (m *SqliteBackend) CreateSecret(secret *Secret) (*Secret, error) {
+	tx := m.sql.Save(&secret)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return secret, nil
+}
+
+func (m *SqliteBackend) GetSecretVersions(string) (*Secret, error) {
 	panic("unimplemented")
 }
 
-func (s *SqliteBackend) GetSecretVersions(string) (*Secret, error) {
+func (m *SqliteBackend) UpdateSecret(*SecretVersion) (*SecretVersion, error) {
 	panic("unimplemented")
 }
 
-func (s *SqliteBackend) UpdateSecret(*SecretVersion) (*SecretVersion, error) {
-	panic("unimplemented")
+func (m *SqliteBackend) GetOrCreateEncryptionKey(pubkey string) (*EncryptionKey, error) {
+	key := EncryptionKey{
+		PublicKey: pubkey,
+	}
+
+	tx := m.sql.FirstOrCreate(&key, "public_key = ?", pubkey)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return &key, nil
 }

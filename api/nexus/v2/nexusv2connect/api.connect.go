@@ -39,6 +39,9 @@ const (
 // reflection-formatted method names, remove the leading slash and convert the remaining slash to a
 // period.
 const (
+	// Kv2NexusServiceListSecretProcedure is the fully-qualified name of the Kv2NexusService's
+	// ListSecret RPC.
+	Kv2NexusServiceListSecretProcedure = "/nexus.v2.Kv2NexusService/ListSecret"
 	// Kv2NexusServiceCreateSecretProcedure is the fully-qualified name of the Kv2NexusService's
 	// CreateSecret RPC.
 	Kv2NexusServiceCreateSecretProcedure = "/nexus.v2.Kv2NexusService/CreateSecret"
@@ -49,7 +52,10 @@ const (
 
 // Kv2NexusServiceClient is a client for the nexus.v2.Kv2NexusService service.
 type Kv2NexusServiceClient interface {
+	ListSecret(context.Context, *connect.Request[v2.ListSecretRequest]) (*connect.Response[v2.ListSecretResponse], error)
 	CreateSecret(context.Context, *connect.Request[v2.CreateSecretRequest]) (*connect.Response[v2.CreateSecretResponse], error)
+	// rpc GetSecretByTitle(GetSecretByTitleRequest) returns (GetSecretByTitleResponse); // Get a secret details by title.
+	// rpc GetSecretVersionByTitle(GetSecretVersionByTitleRequest) returns (GetSecretVersionByTitleResponse); // Get a particular secret version by title.
 	UpdateSecret(context.Context, *connect.Request[v2.UpdateSecretRequest]) (*connect.Response[v2.UpdateSecretResponse], error)
 }
 
@@ -64,6 +70,12 @@ func NewKv2NexusServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 	baseURL = strings.TrimRight(baseURL, "/")
 	kv2NexusServiceMethods := v2.File_nexus_v2_api_proto.Services().ByName("Kv2NexusService").Methods()
 	return &kv2NexusServiceClient{
+		listSecret: connect.NewClient[v2.ListSecretRequest, v2.ListSecretResponse](
+			httpClient,
+			baseURL+Kv2NexusServiceListSecretProcedure,
+			connect.WithSchema(kv2NexusServiceMethods.ByName("ListSecret")),
+			connect.WithClientOptions(opts...),
+		),
 		createSecret: connect.NewClient[v2.CreateSecretRequest, v2.CreateSecretResponse](
 			httpClient,
 			baseURL+Kv2NexusServiceCreateSecretProcedure,
@@ -81,8 +93,14 @@ func NewKv2NexusServiceClient(httpClient connect.HTTPClient, baseURL string, opt
 
 // kv2NexusServiceClient implements Kv2NexusServiceClient.
 type kv2NexusServiceClient struct {
+	listSecret   *connect.Client[v2.ListSecretRequest, v2.ListSecretResponse]
 	createSecret *connect.Client[v2.CreateSecretRequest, v2.CreateSecretResponse]
 	updateSecret *connect.Client[v2.UpdateSecretRequest, v2.UpdateSecretResponse]
+}
+
+// ListSecret calls nexus.v2.Kv2NexusService.ListSecret.
+func (c *kv2NexusServiceClient) ListSecret(ctx context.Context, req *connect.Request[v2.ListSecretRequest]) (*connect.Response[v2.ListSecretResponse], error) {
+	return c.listSecret.CallUnary(ctx, req)
 }
 
 // CreateSecret calls nexus.v2.Kv2NexusService.CreateSecret.
@@ -97,7 +115,10 @@ func (c *kv2NexusServiceClient) UpdateSecret(ctx context.Context, req *connect.R
 
 // Kv2NexusServiceHandler is an implementation of the nexus.v2.Kv2NexusService service.
 type Kv2NexusServiceHandler interface {
+	ListSecret(context.Context, *connect.Request[v2.ListSecretRequest]) (*connect.Response[v2.ListSecretResponse], error)
 	CreateSecret(context.Context, *connect.Request[v2.CreateSecretRequest]) (*connect.Response[v2.CreateSecretResponse], error)
+	// rpc GetSecretByTitle(GetSecretByTitleRequest) returns (GetSecretByTitleResponse); // Get a secret details by title.
+	// rpc GetSecretVersionByTitle(GetSecretVersionByTitleRequest) returns (GetSecretVersionByTitleResponse); // Get a particular secret version by title.
 	UpdateSecret(context.Context, *connect.Request[v2.UpdateSecretRequest]) (*connect.Response[v2.UpdateSecretResponse], error)
 }
 
@@ -108,6 +129,12 @@ type Kv2NexusServiceHandler interface {
 // and JSON codecs. They also support gzip compression.
 func NewKv2NexusServiceHandler(svc Kv2NexusServiceHandler, opts ...connect.HandlerOption) (string, http.Handler) {
 	kv2NexusServiceMethods := v2.File_nexus_v2_api_proto.Services().ByName("Kv2NexusService").Methods()
+	kv2NexusServiceListSecretHandler := connect.NewUnaryHandler(
+		Kv2NexusServiceListSecretProcedure,
+		svc.ListSecret,
+		connect.WithSchema(kv2NexusServiceMethods.ByName("ListSecret")),
+		connect.WithHandlerOptions(opts...),
+	)
 	kv2NexusServiceCreateSecretHandler := connect.NewUnaryHandler(
 		Kv2NexusServiceCreateSecretProcedure,
 		svc.CreateSecret,
@@ -122,6 +149,8 @@ func NewKv2NexusServiceHandler(svc Kv2NexusServiceHandler, opts ...connect.Handl
 	)
 	return "/nexus.v2.Kv2NexusService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
+		case Kv2NexusServiceListSecretProcedure:
+			kv2NexusServiceListSecretHandler.ServeHTTP(w, r)
 		case Kv2NexusServiceCreateSecretProcedure:
 			kv2NexusServiceCreateSecretHandler.ServeHTTP(w, r)
 		case Kv2NexusServiceUpdateSecretProcedure:
@@ -134,6 +163,10 @@ func NewKv2NexusServiceHandler(svc Kv2NexusServiceHandler, opts ...connect.Handl
 
 // UnimplementedKv2NexusServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedKv2NexusServiceHandler struct{}
+
+func (UnimplementedKv2NexusServiceHandler) ListSecret(context.Context, *connect.Request[v2.ListSecretRequest]) (*connect.Response[v2.ListSecretResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("nexus.v2.Kv2NexusService.ListSecret is not implemented"))
+}
 
 func (UnimplementedKv2NexusServiceHandler) CreateSecret(context.Context, *connect.Request[v2.CreateSecretRequest]) (*connect.Response[v2.CreateSecretResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("nexus.v2.Kv2NexusService.CreateSecret is not implemented"))

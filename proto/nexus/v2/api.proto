@@ -12,12 +12,44 @@ message CreateSecretRequest {
   string title = 1;
   bytes content = 2;
   string public_key = 3;
-  string user = 4;
 }
 
 message CreateSecretResponse {}
 
-// TODO: get secret details request
+message ListSecretRequest {}
+
+message ListSecretInner {
+  string title = 1;
+  repeated uint32 versions = 2;
+  string created_by = 3;
+  string created_at = 4;
+}
+
+message ListSecretResponse {
+  repeated ListSecretInner secrets = 1;
+}
+
+message GetSecretByTitleRequest {
+  string title = 1;
+}
+
+message GetSecretByTitleResponse {
+  repeated uint32 versions = 1;
+  string created_by = 2;
+  string created_at = 3;
+}
+
+message GetSecretVersionByTitleRequest {
+  string title = 1;
+  optional uint32 version = 2;
+}
+
+message GetSecretVersionByTitleResponse {
+  optional uint32 version = 1;
+  bytes content = 2;
+  string created_by = 3;
+  string created_at = 4;
+}
 
 message UpdateSecretRequest {
   string title = 1;
@@ -31,6 +63,9 @@ message UpdateSecretResponse {
 }
 
 service Kv2NexusService {
+  rpc ListSecret(ListSecretRequest) returns (ListSecretResponse); // List all secrets.
   rpc CreateSecret(CreateSecretRequest) returns (CreateSecretResponse); // Create a new secret.
+  // rpc GetSecretByTitle(GetSecretByTitleRequest) returns (GetSecretByTitleResponse); // Get a secret details by title.
+  // rpc GetSecretVersionByTitle(GetSecretVersionByTitleRequest) returns (GetSecretVersionByTitleResponse); // Get a particular secret version by title.
   rpc UpdateSecret(UpdateSecretRequest) returns (UpdateSecretResponse); // Update an existing secret.
 }
