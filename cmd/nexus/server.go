@@ -16,7 +16,6 @@ import (
 
 type ServerHandler struct {
 	backend data.Backend
-	mux     *http.ServeMux
 }
 
 func NewConnectHandler(backend data.Backend, mux *http.ServeMux) *ServerHandler {
@@ -61,6 +60,9 @@ func (m *ServerHandler) CreateSecret(ctx context.Context, req *connect.Request[n
 	}
 
 	_, err = m.backend.CreateSecret(secret)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
 
 	// TODO: redo error handling here
 	return connect.NewResponse(&nexusv2.CreateSecretResponse{}), nil
