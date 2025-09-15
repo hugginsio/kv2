@@ -5,6 +5,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -34,7 +35,21 @@ func (m *ServerHandler) ListSecret(ctx context.Context, req *connect.Request[nex
 }
 
 func (m *ServerHandler) CreateSecret(ctx context.Context, req *connect.Request[nexusv2.CreateSecretRequest]) (*connect.Response[nexusv2.CreateSecretResponse], error) {
-	// TODO: validate request
+	if req.Msg == nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("missing request body"))
+	}
+
+	if req.Msg.GetTitle() == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("missing title"))
+	}
+
+	if req.Msg.GetContent() == nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("missing content"))
+	}
+
+	if req.Msg.GetPublicKey() == "" {
+		return nil, connect.NewError(connect.CodeInvalidArgument, errors.New("missing public key"))
+	}
 
 	fmt.Println(req.Msg.PublicKey)
 	encryptionKey, err := m.backend.GetOrCreateEncryptionKey(req.Msg.PublicKey)
