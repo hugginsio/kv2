@@ -19,3 +19,7 @@ tasks:
     cmds:
       - "buf lint"
       - "golangci-lint run"
+  test:
+    desc: Run all tests
+    cmds:
+      - "go test -cover ./..."
