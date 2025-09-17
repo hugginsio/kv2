@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"connectrpc.com/connect"
 	nexusv2 "github.com/hugginsio/kv2/api/nexus/v2"
@@ -30,8 +31,30 @@ func NewConnectHandler(backend data.Backend, mux *http.ServeMux) *ServerHandler 
 	return server
 }
 
-func (m *ServerHandler) ListSecret(ctx context.Context, req *connect.Request[nexusv2.ListSecretRequest]) (*connect.Response[nexusv2.ListSecretResponse], error) {
-	return connect.NewResponse(&nexusv2.ListSecretResponse{}), nil
+func (m *ServerHandler) ListSecret(context.Context, *connect.Request[nexusv2.ListSecretRequest]) (*connect.Response[nexusv2.ListSecretResponse], error) {
+	secrets, err := m.backend.ListSecrets()
+	if err != nil {
+		return nil, connect.NewError(connect.CodeInternal, err)
+	}
+
+	var responseInner []*nexusv2.ListSecretInner
+	for _, secret := range secrets {
+		var versions []uint32
+		for _, version := range secret.Versions {
+			versions = append(versions, uint32(version.Version))
+		}
+
+		responseInner = append(responseInner, &nexusv2.ListSecretInner{
+			Title:     secret.Title,
+			Versions:  versions,
+			CreatedBy: secret.CreatedBy,
+			CreatedAt: secret.CreatedAt.UTC().Format(time.RFC3339),
+		})
+	}
+
+	return connect.NewResponse(&nexusv2.ListSecretResponse{
+		Secrets: responseInner,
+	}), nil
 }
 
 func (m *ServerHandler) CreateSecret(ctx context.Context, req *connect.Request[nexusv2.CreateSecretRequest]) (*connect.Response[nexusv2.CreateSecretResponse], error) {
@@ -63,7 +86,7 @@ func (m *ServerHandler) CreateSecret(ctx context.Context, req *connect.Request[n
 
 	secret := &data.Secret{
 		Title: req.Msg.Title,
-		SecretVersion: []data.SecretVersion{
+		Versions: []data.Version{
 			{
 				Version:          1,
 				Content:          req.Msg.Content,

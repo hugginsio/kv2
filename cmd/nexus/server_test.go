@@ -19,7 +19,7 @@ type mockBackend struct {
 	createSecretFunc             func(*data.Secret) (*data.Secret, error)
 	listSecretsFunc              func() ([]*data.Secret, error)
 	getSecretVersionsFunc        func(string) (*data.Secret, error)
-	updateSecretFunc             func(*data.SecretVersion) (*data.SecretVersion, error)
+	updateSecretFunc             func(*data.Version) (*data.Version, error)
 }
 
 func (m *mockBackend) GetOrCreateEncryptionKey(pubkey string) (*data.EncryptionKey, error) {
@@ -52,7 +52,7 @@ func (m *mockBackend) GetSecretVersions(title string) (*data.Secret, error) {
 	return &data.Secret{}, nil
 }
 
-func (m *mockBackend) UpdateSecret(version *data.SecretVersion) (*data.SecretVersion, error) {
+func (m *mockBackend) UpdateSecret(version *data.Version) (*data.Version, error) {
 	if m.updateSecretFunc != nil {
 		return m.updateSecretFunc(version)
 	}
@@ -314,11 +314,11 @@ func TestCreateSecret_VerifySecretStructure(t *testing.T) {
 		t.Fatalf("Expected title %q, got %q", expectedTitle, capturedSecret.Title)
 	}
 
-	if len(capturedSecret.SecretVersion) != 1 {
-		t.Fatalf("Expected 1 secret version, got %d", len(capturedSecret.SecretVersion))
+	if len(capturedSecret.Versions) != 1 {
+		t.Fatalf("Expected 1 secret version, got %d", len(capturedSecret.Versions))
 	}
 
-	version := capturedSecret.SecretVersion[0]
+	version := capturedSecret.Versions[0]
 	if version.Version != 1 {
 		t.Fatalf("Expected version 1, got %d", version.Version)
 	}

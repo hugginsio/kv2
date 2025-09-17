@@ -23,7 +23,7 @@ func NewSqliteBackend(config *SqliteConfiguration) (*SqliteBackend, error) {
 		return nil, err
 	}
 
-	if err := db.AutoMigrate(&EncryptionKey{}, &Secret{}, &SecretVersion{}); err != nil {
+	if err := db.AutoMigrate(&EncryptionKey{}, &Secret{}, &Version{}); err != nil {
 		return nil, err
 	}
 
@@ -32,7 +32,8 @@ func NewSqliteBackend(config *SqliteConfiguration) (*SqliteBackend, error) {
 
 func (m *SqliteBackend) ListSecrets() ([]*Secret, error) {
 	var secrets []*Secret
-	if err := m.sql.Find(&secrets).Error; err != nil {
+	// TODO: add sort to preload and find
+	if err := m.sql.Preload("Versions").Find(&secrets).Error; err != nil {
 		return nil, err
 	}
 
@@ -52,7 +53,7 @@ func (m *SqliteBackend) GetSecretVersions(string) (*Secret, error) {
 	panic("unimplemented")
 }
 
-func (m *SqliteBackend) UpdateSecret(*SecretVersion) (*SecretVersion, error) {
+func (m *SqliteBackend) UpdateSecret(*Version) (*Version, error) {
 	panic("unimplemented")
 }
 

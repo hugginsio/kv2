@@ -20,13 +20,13 @@ type EncryptionKey struct {
 }
 
 type Secret struct {
-	ID            uint            `gorm:"primaryKey;autoIncrement;"`   // Unique numeric identifier for the Secret. PK.
-	Title         string          `gorm:"not null;unique;uniqueIndex"` // Unique title of the Secret.
-	SecretVersion []SecretVersion `gorm:"foreignKey:SecretID"`         // All versions of the Secret.
+	ID       uint      `gorm:"primaryKey;autoIncrement;"`   // Unique numeric identifier for the Secret. PK.
+	Title    string    `gorm:"not null;unique;uniqueIndex"` // Unique title of the Secret.
+	Versions []Version `gorm:"foreignKey:SecretID"`         // All versions of the Secret.
 	CreatedSignature
 }
 
-type SecretVersion struct {
+type Version struct {
 	ID       uint          `gorm:"primaryKey;autoIncrement"`        // Unique numeric identifier for the SecretVersion. PK.
 	SecretID uint          `gorm:"not null;foreignKey;uniqueIndex"` // The ID of the Secret this version belongs to.
 	Version  uint          `gorm:"not null"`                        // The version of the Secret.
@@ -44,6 +44,6 @@ type Backend interface {
 	ListSecrets() ([]*Secret, error)                                // List all secrets.
 	CreateSecret(*Secret) (*Secret, error)                          // Create a new secret.
 	GetSecretVersions(string) (*Secret, error)                      // Retrieve all versions of an existing secret by title.
-	UpdateSecret(*SecretVersion) (*SecretVersion, error)            // Update an existing secret with a new version.
+	UpdateSecret(*Version) (*Version, error)                        // Update an existing secret with a new version.
 	GetOrCreateEncryptionKey(pubkey string) (*EncryptionKey, error) // Retrieve or create the encryption key details.
 }
